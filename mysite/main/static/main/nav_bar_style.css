@@ -1,0 +1,141 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+nav{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 6vh;
+    background-color:#602020;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.loginout {
+    background-color: #3F7FBF;
+    border: none;
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 6px;
+    padding: 15px 32px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.vote {
+    background-color: #99ccff;
+    color: white;
+    border: none;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 6px;
+    padding: 15px 32px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.logo{
+    color: rgb(255, 240, 240);
+    font-size: 24px;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 5px;
+    display: flex;
+    position: absolute;
+    left: 4vh;
+}
+
+.profile_pic{
+    background-color: white;
+    object-fit: cover;
+    width: 5vh;
+    height:5vh;
+    border-radius: 100%;
+    direction: rtl;
+}
+.nav-links{
+    position: absolute;
+    right: 2vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 50%;
+    
+}
+.nav-links li{
+   list-style: none;
+}
+.nav-links a{
+    color: rgb(255, 240, 240);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.burger{
+    display: none;
+    cursor: pointer;
+}
+.burger div{
+    width: 25px;
+    height: 3px;
+    background-color: rgb(255, 240, 240);
+    margin: 5px;
+}
+@media screen and (max-width: 1000px){
+    
+    .nav-links{
+        width: 60%;
+    }
+}
+@media screen and (max-width: 800px){
+    body{
+        overflow-x: hidden;
+    }
+    nav{
+        justify-content: space-between;
+    }
+    .nav-links{
+        position: absolute;
+        width: 30vw;
+        min-width: 180px;
+        right: 0px;
+        height: 100vh;
+        top: 6vh;
+        background-color:#602020;
+        display: block;
+        flex-direction: column;
+        align-items: left;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-out;
+    }
+    .nav-links li {
+        margin-left: 2vh;
+        margin-top: 20px;
+        opacity: 0;
+    }
+    
+    .burger{
+        position: absolute;
+        right: 4vh;
+        display: block;
+    }
+}
+.nav-active{
+    transform: translateX(0%);
+}
+
+@keyframes navLinksFade{
+    from{
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to{
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+

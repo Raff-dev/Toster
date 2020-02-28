@@ -1,0 +1,42 @@
+.posts li{
+    list-style: none;
+}
+
+.post{
+    background-color: rgb(232, 232, 241);
+    border: lavender;
+    border-radius: 10px;
+    
+}
+
+.post:hover{
+    background-color: rgb(227, 224, 255);
+}
+
+.post-nav{
+    display: flex;
+    align-items: center;
+    text-transform: capitalize;
+    font-weight: bold;
+}
+.post-content p{
+    word-wrap: break-word;
+}
+.timestamp{
+    right: 5vh;
+    font-size: 12px;
+    font-weight: lighter;
+}
+.option-dots{
+    display: flex;
+    cursor: pointer;
+    position: absolute;
+    right: 3vh;
+}
+.option-dots div{
+    width: 4px;
+    height: 4px;
+    margin: 1.5px;
+    border-radius: 50%;
+    background-color: rgb(153, 153, 153);
+}
