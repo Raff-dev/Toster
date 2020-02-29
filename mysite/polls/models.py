@@ -2,15 +2,15 @@ from django.db import models
 from django.utils import timezone
 import datetime
 
-# Create your models here.
+
 class Question(models.Model):
-    question_text = models.CharField('nazwa',max_length=200)
+    question_text = models.CharField('nazwa', max_length=200)
     pub_date = models.DateTimeField('date published')
     scrub_schroob = models.PositiveIntegerField(
-        default=('asd',3,'nxddddx'),
-        choices = [('aaa',2),(3,'bbb'),('asd','ddd')],
+        default=('asd', 3, 'nxddddx'),
+        choices=[('aaa', 2), (3, 'bbb'), ('asd', 'ddd')],
         help_text='help text'
-        )
+    )
 
     def __str__(self):
         return self.question_text

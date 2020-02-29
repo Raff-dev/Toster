@@ -1,38 +1,16 @@
+:root{
+    overflow-x: hidden;
+}
 body { 
     background-color: #f7f7f7;
 }
-.login-modal{
-    width: 100%;
-    height:  100%;
-    background-color: rgba(0,0,0, 0.7);
-    position: absolute;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    top: 0;
 
+body::-webkit-scrollbar{
+    width: 0.25rem;
 }
-.login-modal-content{
-    position: relative;
-    background-color: white;
-    width: 50%;
-    height: 30%;
-    border-radius: 4px;
-    padding: 20px;
-    text-align: center;
+body::-webkit-scrollbar-track {
+    background: rgba(250,50, 50, 0.7);
 }
-.login-modal-close{
-    cursor: pointer;
-    position: absolute;
-    right: 15px;
-    top: 0px;
-    font-size: 50px;
-    transform: rotate(45deg);
-}
-.login-modal-content input{
-    width: 50%;
-    display: block;
-    
-    margin: 15px auto;
-    
+body::-webkit-scrollbar-thumb {
+    background: rgba(50,250, 50, 0.7);
 }

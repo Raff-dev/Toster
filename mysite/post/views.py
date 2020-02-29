@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import DetailView, CreateView, ListView, FormView, DeleteView
+from django.views.generic import (
+    DetailView, CreateView, ListView, FormView, DeleteView, UpdateView)
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -11,12 +12,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 
+
 class PostDetailView(DetailView):
     model = Post
     template_name = 'post/post_detail.html'
 
 
-class PostCreateView(LoginRequiredMixin,CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['content']
 
@@ -25,7 +27,8 @@ class PostCreateView(LoginRequiredMixin,CreateView):
         form.instance.timestamp = timezone.now()
         return super().form_valid(form)
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['content']
 
@@ -35,8 +38,9 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def test_func(self):
         post = self.get_object()
-        return True if self.request.user == post.author else False
-            
+        return self.request.user == post.author
+
+
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = 'post/post_detail.html'
@@ -44,7 +48,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         post = self.get_object()
-        return True if self.request.user == post.author else False
+        return self.request.user == post.author
+
 
 class PostsLiked(APIView):
     def get(self, request, format=None, *args, **kwargs,):
@@ -56,13 +61,14 @@ class PostsLiked(APIView):
                 data[post.id] = True if user in post.likes.all() else False
         return Response(data)
 
+
 class PostLikeAPIToggle(APIView):
     authentication_classes = (authentication.SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, format=None, *args, **kwargs,):
         user = self.request.user
-        post = get_object_or_404(Post, pk = self.kwargs.get('pk'))
+        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
         liked = False
 
         if user in post.likes.all():
@@ -76,6 +82,5 @@ class PostLikeAPIToggle(APIView):
         data = {
             'liked': liked,
         }
-        print('data: ',data)
+        print('data: ', data)
         return Response(data)
-

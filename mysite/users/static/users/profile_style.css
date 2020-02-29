@@ -1,11 +1,11 @@
-.profile_profile_pic{
+.profile-profile-img{
     object-fit: cover;
     width:250px;
     height:250px;
     background-color: white;
     border: thin;
 }
-.user_info li{
+.user-info li{
     list-style: none;
     text-transform: capitalize;
     font-family: 'Open Sans', sans-serif;

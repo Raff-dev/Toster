@@ -1,0 +1,40 @@
+.modal{
+    width: 100%;
+    height:  100%;
+    background-color: rgba(0,0,0, 0.7);
+    position: absolute;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+
+}
+.modal-content{
+    position: relative;
+    background-color: white;
+    width: 50%;
+    height: 30%;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+
+}
+
+.profile-update-modal-content{
+    height: auto;
+    margin: 20px;
+}
+.modal-close{
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 0px;
+    font-size: 50px;
+    transform: rotate(45deg);
+}
+.modal-content input{
+    width: 50%;
+    display: block;
+    margin: 15px auto;
+
+}

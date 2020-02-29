@@ -1,45 +1,48 @@
 {% load static %}
+
 <!DOCTYPE html>
 
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="vievport" content="width=device-width", initial-scale="1.0">
+    <meta name="vievport" content="width=device-width" , initial-scale="1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
-    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'main/base_style.css'%}">
+    <link rel="stylesheet" href="{% static 'main/modal_style.css'%}">
     <link rel="stylesheet" href="{% static 'main/nav_bar_style.css'%}">
     <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    
+
     {% block link %}{% endblock %}
-    
+
     <title>Raff</title>
 </head>
 
-<body class>
+<body>
     <nav>
         <div class="logo"><a>Logo</a></div>
-        
+
         <ul class="nav-links">
             <li><a href="{%url 'main:main' %}">Home</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Work</a></li>
             <li><a href="#">Projects</a></li>
             {% if user.is_authenticated %}
-                <li><a href="{%url 'users:logout' %}">Log Out</a></li> 
-                {% if user.username == 'admin' %}
-                <li><a href="/admin">{{user.username}}</a></li> 
-                {% else %}
-                <li><a href="{%url 'users:profile' user.profile.id %}">{{user.username}}</a></li> 
-                {% endif %}
-                <li><a href="{%url 'users:profile' user.profile.id %}"><img class = "profile_pic" src="{{user.profile.profile_pic.url}}" alt="chuj"></a></li> 
-                
+            <li><a href="{%url 'users:logout' %}">Log Out</a></li>
+            {% if user.username == 'admin' %}
+            <li><a href="/admin">{{user.username}}</a></li>
             {% else %}
-                <li><a href="{%url 'users:login' %}">Log In</a></li>            
+            <li><a href="{%url 'users:profile' user.profile.id %}">{{user.username}}</a></li>
+            {% endif %}
+            <li><a href="{%url 'users:profile' user.profile.id %}"><img class="profile-img"
+                        src="{{user.profile.profile_img.url}}" alt="chuj"></a></li>
+
+            {% else %}
+            <li><a href="{%url 'users:login' %}">Log In</a></li>
             {% endif %}
         </ul>
         <div class="burger">
@@ -51,20 +54,21 @@
     <div class="main">
         <div class="row justify-content-center">
             <div class="col-8 col-2">
-                <button class ="login-redirect btn btn-success" >Sample Button</button>
-                {%block content%}{%endblock%}
+                <button class="login-redirect btn btn-success">Sample Button</button>
+
             </div>
+            {%block content%}{%endblock%}
         </div>
-    </div>  
-    
-    <div class="login-modal">
-        <div class="login-modal-content">
-            <div class="login-modal-close">+</div>
+    </div>
+
+    <div class="login-modal modal">
+        <div class="login-modal-content modal-content">
+            <div class="login-modal-close modal-close">+</div>
             <input type="text" placeholder="Login">
             <input type="text" placeholder="Password">
             <a href="#login" class="button">Log In</a>
         </div>
-    </div>    
+    </div>
 </body>
 
 <script src="{% static 'main/base.js' %}"></script>

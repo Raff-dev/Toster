@@ -14,13 +14,15 @@
 </div>
 
 {%if user.is_authenticated%}
-<form class="post-form-ajax col-md ml-3" method="POST" action="{% url 'post:post_create' %}">
-    {% csrf_token %}
-    <div class=" form-group  pt-3">
-        {{post_form}}
-    </div>
-    <button type="submit" class="button-publish btn btn-success">Publish</button>
-</form>
+<div class="posts col-8 offset-2 mt-3">
+    <form class="post-form-ajax col-md ml-3" method="POST" action="{% url 'post:post_create' %}">
+        {% csrf_token %}
+        <div class=" form-group  pt-3">
+            {{post_form}}
+        </div>
+        <button type="submit" class="button-publish btn btn-success">Publish</button>
+    </form>
+</div>
 {%endif%}
 
 <div class="posts col-8 offset-2 mt-3">
@@ -28,39 +30,42 @@
     <a class="overlay" href="{% url 'post:post_detail' post.id %}">
         <div class="post mt-2" id="post-{{post.id}}">
             <div class="post-nav mt-2">
-                <img class = "profile_pic ml-2" src="{{post.author.profile.profile_pic.url}}"></img>
+                <img class="profile-img ml-2" src="{{post.author.profile.profile_img.url}}"></img>
                 <div class="mt-2">
                     <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
-                    <h5 class="timestamp ml-2">{{post.timestamp|naturaltime}}</h5>
+                    <p class="timestamp ml-2">{{post.timestamp|naturaltime}}</p>
                 </div>
-                    {% csrf_token %}
-                    <button type="button" id ="{{post.id}}" liked-href="{{post.get_posts_liked_url}}"data-href="{{post.get_like_api_url}}" data-likes="{{post.likes.count}}" class="like-button-ajax ml-2 btn btn-outline-success btn-sm">
-                        {{post.likes.count}} Like{{post.likes.count|pluralize}}
-                    </button>
-                <button type="button" class="ml-2 btn btn-outline-primary btn-sm">Edit</button>
+                {% csrf_token %}
+                <button type="button" id="{{post.id}}" liked-href="{{post.get_posts_liked_url}}"
+                    data-href="{{post.get_like_api_url}}" data-likes="{{post.likes.count}}"
+                    class="like-button-ajax ml-2 btn btn-outline-success btn-sm">
+                    {{post.likes.count}} Like{{post.likes.count|pluralize}}
+                </button>
                 {% if user == post.author %}
-                    <form method= "POST" class="delete-button-ajax" id="{{post.id}}" action="{%url 'post:post_delete' post.id %}">
-                        {% csrf_token %}
-                        <button  type="submit" class=" ml-2 btn btn-outline-danger btn-sm">Delete</button>
-                    </form>
+                <button type="button" class="ml-2 btn btn-outline-primary btn-sm">Edit</button>
+                <form method="POST" class="delete-button-ajax" id="{{post.id}}"
+                    action="{%url 'post:post_delete' post.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class=" ml-2 btn btn-outline-danger btn-sm">Delete</button>
+                </form>
                 {% endif %}
                 <div class="option-dots">
                     <div class="dot1"></div>
                     <div class="dot2"></div>
                     <div class="dot3"></div>
-                </div>                
+                </div>
             </div>
             <div class="post-content mx-2 py-1 ">
-                {% if not post.should_snippet %}
-                    <p>{{post.snippet}}</p> <p id="show-more">show more...</p>
+                {% if post.should_snippet %}
+                <p>{{post.snippet}}</p>
+                <p id="show-more">show more...</p>
                 {% else %}
-                    <p>{{post.content}}</p>
+                <p>{{post.content}}</p>
                 {%endif%}
-            </div>            
+            </div>
         </div>
     </a>
     {% endfor %}
-    
+
 </div>
 {% endblock content %}
-

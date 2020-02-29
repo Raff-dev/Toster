@@ -1,61 +1,104 @@
 {% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
 {%load static%}
 {% load humanize %}
 {% block link %}
 <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'users/profile_style.css'%}">
+<link rel="stylesheet" href="{% static 'main/home_style.css'%}">
 {% endblock %}
 
 
-
 {% block content %}
-<ul>
-    <div class="user_info">
-        <img class="profile_profile_pic" src="{{profile.profile_pic.url}}" alt="profile_pic"> 
-        <li><h2>{{profile.user.username}}</h2></li>
-        <li><h2>{{profile.user.email}}</h2></li>
-        <li><h2>{{profile.user.chuj}}</h2></li>
-        
-        {% for post in posts %}
-        <div class="posts bg-dark text-white pt-2 mt-3">
-            <a class="overlay" href="{% url 'post:post_detail' post.id %}">
-                <div class="post mt-2">
-                    <div class="post-nav mt-2">
-                        <img class = "profile_pic ml-2" src="{{post.author.profile.profile_pic.url}}"></img>
-                        <div class="mt-2">
-                            <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
-                            <h5 class="timestamp ml-2">{{post.timestamp|naturaltime}}</h5>
-                        </div>
-                        <button type="button" class="ml-2 btn btn-outline-success btn-sm">{{post.likes.count}} Likes</button>
-                        {% if user.id == profile.user.id %}
-                        <button type="button" class="ml-2 btn btn-outline-primary btn-sm">Edit</button>
-                        <button type="button" class="ml-2 btn btn-outline-danger btn-sm">Delete</button>
-                        {% endif %}
-                        <div class="bg-white">
-                            <div class="dot1"></div>
-                            <div class="dot2"></div>
-                            <div class="dot3"></div>
-                        </div>
-                    </div>
-                    <div class="ml-4 mt-2">
-                        {% if not post.should_snippet %}
-                            <p id="post-content">{{post.snippet}}</p> <p id="show-more">show more...</p>
-                        {% else %}
-                            <p id="post-content">{{post.content}}</p>
-                        {%endif%}
-        
-                        <script>
-                            document.getElementById("show-more").onclick = function(){
-                                document.getElementById("show-more").innerHTML="";
-                                document.getElementById("post-content").innerHTML = "{{post.content}}";
-                            };
-                            
-                        </script>
-                    </div>            
-                </div>
-            </a>
+<div class="profile-update-modal modal">
+    <div class="profile-update-modal-content modal-content">
+        <div class="profile-update-modal-close modal-close">+</div>
+        <form method="POST" class="profile-update-form" enctype="multipart/form-data"
+            action="{%url 'users:profile_update' profile.id%}" novalidate="">
+            {% csrf_token %}
+            {{update_form|crispy}}
+            <button type="submit" class="profile-update-save-button btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+<div class="profile col-8 ">
+    <div class="profile-info">
+        <div class="profile-background-img"></div>
+        <div>
+            <img class="profile-profile-img" src="{{profile.profile_img.url}}" alt="profile_img">
+            <div class="username">
+                <p>{{profile.user.username}}</p>
+                <p>{{profile.alias}}</p>
+                <p>{{profile.name}}</p>
+                <p>Joined: {{profile.join_timestamp}}</p>
+                <a class="btn btn-success" href="{{profile.get_update_profile_url}}">Edit View</a>
+            </div>
+            <button class='profile-update-modal-redirect btn btn-primary'>Edit</button>
         </div>
+        <div>
+            <p>user id:{{profile.user.id}}</p>
+            <p>profile id:{{profile.id}}</p>
+            <p>{{profile.description}}</p>
+            <p>{{profile.user.email}}</p>
+            <p>Following: {{profile.following.set_all.count}}</p>
+            <p>Followers: {{profile.followers.set_all.count}}</p>
+        </div>
+    </div>
+
+    <div>
+        <div class="posts text-white pt-2 mt-3"></div>
+        {% for post in posts %}
+        <a class="overlay" href="{% url 'post:post_detail' post.id %}">
+            <div class="post mt-2" id="post-{{post.id}}">
+                <div class="post-nav mt-2">
+                    <img class="profile-img ml-2" src="{{post.author.profile.profile_img.url}}"></img>
+                    <div class="mt-2">
+                        <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
+                        <p class="timestamp ml-2">{{post.timestamp|naturaltime}}</p>
+                    </div>
+                    {% csrf_token %}
+                    <button type="button" id="{{post.id}}" liked-href="{{post.get_posts_liked_url}}"
+                        data-href="{{post.get_like_api_url}}" data-likes="{{post.likes.count}}"
+                        class="like-button-ajax ml-2 btn btn-outline-success btn-sm">
+                        {{post.likes.count}} Like{{post.likes.count|pluralize}}
+                    </button>
+                    {% if user == post.author %}
+                    <button type="button" class="ml-2 btn btn-outline-primary btn-sm">update</button>
+                    <form method="POST" class="delete-button-ajax" id="{{post.id}}"
+                        action="{%url 'post:post_delete' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class=" ml-2 btn btn-outline-danger btn-sm">Delete</button>
+                    </form>
+                    {% endif %}
+                    <div class="bg-white">
+                        <div class="dot1"></div>
+                        <div class="dot2"></div>
+                        <div class="dot3"></div>
+                    </div>
+                </div>
+                <div class="ml-4 mt-2">
+                    {% if not post.should_snippet %}
+                    <p id="post-content">{{post.snippet}}</p>
+                    <p id="show-more">show more...</p>
+                    {% else %}
+                    <p id="post-content">{{post.content}}</p>
+                    {%endif%}
+
+                    <script>
+                        document.getElementById("show-more").onclick = function () {
+                            document.getElementById("show-more").innerHTML = "";
+                            document.getElementById("post-content").innerHTML = "{{post.content}}";
+                        };
+                    </script>
+                </div>
+            </div>
+        </a>
         {% endfor %}
     </div>
-</ul>
+</div>
+</div>
+</div>
+
+<script src="{% static 'users/update_profile.js' %}"></script>
 {% endblock %}
