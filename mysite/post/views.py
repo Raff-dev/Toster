@@ -34,6 +34,10 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        print('Post update clean data:', form.cleaned_data)
+        print('kwargs', self.kwargs)
+        print('request.POST:', self.request.POST)
+        print('request.FILES:', self.request.FILES)
         return super().form_valid(form)
 
     def test_func(self):

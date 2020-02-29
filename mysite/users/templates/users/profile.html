@@ -64,7 +64,7 @@
                         {{post.likes.count}} Like{{post.likes.count|pluralize}}
                     </button>
                     {% if user == post.author %}
-                    <button type="button" class="ml-2 btn btn-outline-primary btn-sm">update</button>
+                    <button type="button" class="ml-2 btn btn-outline-primary btn-sm">Edit</button>
                     <form method="POST" class="delete-button-ajax" id="{{post.id}}"
                         action="{%url 'post:post_delete' post.id %}">
                         {% csrf_token %}

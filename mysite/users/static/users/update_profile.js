@@ -15,11 +15,11 @@ const ProfileUpdateInfo = () => {
             contentType: false,
             processData: false,
             success: function (data) {
-                console.log("success");
+                console.log("profile updated");
                 document.querySelector(".profile-update-modal").style.display = 'none';
             },
             error: function (error) {
-                console.log("error", error)
+                console.log("error: updating profile", error)
             },
         })
     })

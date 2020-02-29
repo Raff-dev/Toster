@@ -1,4 +1,4 @@
-const navSlide = () => {
+const NavSlide = () => {
     const burger = document.querySelector('.burger');
     const nav = document.querySelector('.nav-links');
     const navLinks = document.querySelectorAll('.nav-links li');
@@ -11,7 +11,7 @@ const navSlide = () => {
     });
 }
 
-const deleteButton = () => {
+const DeletePost = () => {
     $(".delete-button-ajax").on("click", function (event) {
         event.preventDefault();
 
@@ -41,13 +41,69 @@ const deleteButton = () => {
         }
     })
 }
+function closeEdit(id) {
+    var button = document.querySelector(".post-edit-button");
+    console.log('closing', id);
+    document.querySelector(".post-edit-group-" + id).style.display = 'none';
+    document.querySelector(".post-content-" + id).style.display = 'flex';
+    $(button).text('Edit');
+    button.classList.add('btn-outline-primary');
+    button.classList.remove('btn-primary');
+}
 
-function setLikeText(obj, newVal) {
+const EditPost = () => {
+    $(".post-edit-button").on("click", function (event) {
+        var id = $(this).attr("id")
+
+        if (this.innerText == 'Edit') {
+            document.querySelector(".post-edit-group-" + id).style.display = 'flex';
+            document.querySelector(".post-content-" + id).style.display = 'none';
+            $(this).text('Close');
+            console.log('opening');
+            this.classList.add('btn-primary');
+            this.classList.remove('btn-outline-primary');
+        } else closeEdit(id);
+    });
+
+    $(".post-edit-form").submit(function (event) {
+        event.preventDefault();
+
+        var form = $(this);
+        var id = $(".post-edit-button").attr("id");
+        var method = $(this).attr("method");
+        var endPoint = $(this).attr("action");
+        var formData = $(this).serialize();
+        console.log(id);
+        console.log('form data', formData);
+
+
+        $.ajax({
+            url: endPoint,
+            method: method,
+            data: formData,
+
+            success: function (data) {
+                console.log("post updated");
+                var text = document.getElementById("input-" + id).value;
+                $(document.getElementById("content1-" + id)).text(text);
+                $(document.getElementById("content2-" + id)).text(text);
+                console.log(document.getElementById("content1-" + id));
+                closeEdit(id);
+            },
+            error: function (error) {
+                console.log("error: updating post");
+
+            },
+        })
+    })
+};
+
+function SetLikeText(obj, newVal) {
     if (newVal == 1) obj.text(newVal + " Like");
     else obj.text(newVal + " Likes");
 }
 
-function setClicked(btn, type, clicked) {
+function SetClicked(btn, type, clicked) {
     if (clicked) {
         var add = "btn-" + type;
         var del = "btn-outline-" + type;
@@ -60,7 +116,7 @@ function setClicked(btn, type, clicked) {
     btn.removeClass(del);
 }
 
-function markLiked() {
+function MarkLiked() {
     var postsLikedUrl = $(".like-button-ajax").attr("liked-href")
     $.ajax({
         url: postsLikedUrl,
@@ -71,7 +127,7 @@ function markLiked() {
             for (let i = 0; i < buttons.length; i++) {
                 let id = $(buttons[i]).attr('id');
                 if (data[id] == true)
-                    setClicked($(buttons[i]), "success", true);
+                    SetClicked($(buttons[i]), "success", true);
             }
         },
         error: function (errorData) {
@@ -80,7 +136,7 @@ function markLiked() {
         }
     })
 }
-const likeButton = () => {
+const LikePost = () => {
     $(".like-button-ajax").on("click", function (event) {
         event.preventDefault();
         var thisBtn = $(this);
@@ -93,12 +149,12 @@ const likeButton = () => {
             method: "GET",
             data: {},
             success: function (data) {
-                setClicked(thisBtn, "success", data.liked)
+                SetClicked(thisBtn, "success", data.liked)
                 if (data.liked) {
-                    setLikeText(thisBtn, likesCount + 1);
+                    SetLikeText(thisBtn, likesCount + 1);
                     $(thisBtn).attr("data-likes", likesCount + 1);
                 } else {
-                    setLikeText(thisBtn, likesCount - 1);
+                    SetLikeText(thisBtn, likesCount - 1);
                     $(thisBtn).attr("data-likes", likesCount - 1);
                 }
                 console.log(data);
@@ -112,7 +168,7 @@ const likeButton = () => {
     })
 }
 
-const publishButton = () => {
+const PublishPost = () => {
     $(".button-publish").on("click", function (event) {
         event.preventDefault();
         var thisForm = $(".post-form-ajax");
@@ -126,6 +182,7 @@ const publishButton = () => {
             data: formData,
             success: function (data) {
                 //console.log(data)
+                thisForm[0].reset();
                 console.log("success")
             },
             error: function (errorData) {
@@ -135,8 +192,9 @@ const publishButton = () => {
         })
     })
 }
-navSlide();
-deleteButton();
-publishButton();
-likeButton();
-markLiked();
+NavSlide();
+MarkLiked();
+DeletePost();
+EditPost();
+LikePost();
+PublishPost();

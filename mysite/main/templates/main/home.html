@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% load humanize %}
 {% block link%}
 
@@ -29,6 +30,7 @@
     {% for post in most_recent %}
     <a class="overlay" href="{% url 'post:post_detail' post.id %}">
         <div class="post mt-2" id="post-{{post.id}}">
+
             <div class="post-nav mt-2">
                 <img class="profile-img ml-2" src="{{post.author.profile.profile_img.url}}"></img>
                 <div class="mt-2">
@@ -42,7 +44,8 @@
                     {{post.likes.count}} Like{{post.likes.count|pluralize}}
                 </button>
                 {% if user == post.author %}
-                <button type="button" class="ml-2 btn btn-outline-primary btn-sm">Edit</button>
+                <button type="button" id="{{post.id}}"
+                    class="post-edit-button ml-2 btn btn-outline-primary btn-sm">Edit</button>
                 <form method="POST" class="delete-button-ajax" id="{{post.id}}"
                     action="{%url 'post:post_delete' post.id %}">
                     {% csrf_token %}
@@ -55,13 +58,27 @@
                     <div class="dot3"></div>
                 </div>
             </div>
-            <div class="post-content mx-2 py-1 ">
+
+            <div class="post-content-{{post.id}} mx-2 py-1 ">
                 {% if post.should_snippet %}
-                <p>{{post.snippet}}</p>
+                <p id="content1-{{post.id}}">{{post.snippet}}</p>
                 <p id="show-more">show more...</p>
                 {% else %}
-                <p>{{post.content}}</p>
+                <p id="content2-{{post.id}}">{{post.content}}</p>
                 {%endif%}
+            </div>
+
+            <div class="post-edit-group post-edit-group-{{post.id}}">
+                <form class="post-edit-form" id="form-{{post.id}}" method="POST"
+                    action="{% url 'post:post_update' post.id %}">
+                    {% csrf_token %}
+                    <label>asdd</label>
+                    <input name="content" class="m-2" value="{{post.content}}" type="text" maxlength=" 300" required
+                        id="input-{{post.id}}" form="form-{{post.id}}">
+                    <div class="post-edit-form-buttons">
+                        <button type="submit" class="post-edit-submit-button btn btn-primary">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </a>
