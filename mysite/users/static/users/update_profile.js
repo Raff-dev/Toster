@@ -1,12 +1,12 @@
 const ProfileUpdateInfo = () => {
     $(".profile-update-form").submit(function (event) {
-        event.preventDefault();
+        //event.preventDefault();
         var form = $(this);
         var endPoint = form.attr("action");
         var method = form.attr("method");
         var formData = new FormData(this);
         console.log('endpoint: ', endPoint);
-        console.log('form data:', formData);
+        console.log('form data:', formData.content);
         $.ajax({
             url: endPoint,
             method: method,

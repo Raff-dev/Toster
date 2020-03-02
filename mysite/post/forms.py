@@ -1,8 +1,14 @@
 from django import forms
 from .models import Post
 
-class PostForm(forms.Form):
-    content = forms.CharField(max_length=300, help_text="What's up?", label="Post here", )
+
+class PostForm(forms.ModelForm):
+    content = forms.CharField(max_length=300, widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'What are you thinking about?',
+    }
+    ))
 
     class Meta:
         model = Post
+        fields = ['content', ]

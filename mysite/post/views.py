@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from .models import Post
-
+from main.decorators import log_form_data
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
@@ -22,7 +22,13 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['content']
 
+    @log_form_data
     def form_valid(self, form):
+        parent_id = self.request.POST['parent']
+        if parent_id:
+            form.instance.parent = Post.objects.get(pk=parent_id)
+        else:
+            form.instance.parent = None
         form.instance.author = self.request.user
         form.instance.timestamp = timezone.now()
         return super().form_valid(form)
@@ -32,12 +38,9 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['content']
 
+    @log_form_data
     def form_valid(self, form):
         form.instance.author = self.request.user
-        print('Post update clean data:', form.cleaned_data)
-        print('kwargs', self.kwargs)
-        print('request.POST:', self.request.POST)
-        print('request.FILES:', self.request.FILES)
         return super().form_valid(form)
 
     def test_func(self):
@@ -50,6 +53,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     template_name = 'post/post_detail.html'
     success_url = '/'
 
+    @log_form_data
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author

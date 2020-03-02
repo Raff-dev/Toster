@@ -11,3 +11,12 @@
     font-family: 'Open Sans', sans-serif;
     
 }
+.profile-info{
+    background-color: rgba(240,240,255, 1);
+    padding: 10px;
+    border-radius: 4px;
+}
+.main-profile-info{
+    display: flex;
+    flex-direction: row;
+}

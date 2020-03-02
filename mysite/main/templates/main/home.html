@@ -4,7 +4,7 @@
 {% load humanize %}
 {% block link%}
 
-<link rel="stylesheet" href="{% static 'main/home_style.css'%}">
+<link rel="stylesheet" href="{% static 'post/post_style.css'%}">
 {% endblock%}
 
 {% block content %}
@@ -15,74 +15,149 @@
 </div>
 
 {%if user.is_authenticated%}
-<div class="posts col-8 offset-2 mt-3">
-    <form class="post-form-ajax col-md ml-3" method="POST" action="{% url 'post:post_create' %}">
+<div class="bg-danger posts col-8 offset-2 mt-3">
+    <form class="post-create-form" method="POST" action="{% url 'post:post_create' %}" pk={{post.id}} id={{post.id}}>
         {% csrf_token %}
-        <div class=" form-group  pt-3">
+        <div class=" form-group">
             {{post_form}}
+            <input class="d-none" type="text" name="parent" value="">
         </div>
-        <button type="submit" class="button-publish btn btn-success">Publish</button>
+        <button type="submit" class="post-create-button btn btn-success">Publish</button>
     </form>
 </div>
 {%endif%}
 
 <div class="posts col-8 offset-2 mt-3">
-    {% for post in most_recent %}
+    {% for post in posts_all %}
     <a class="overlay" href="{% url 'post:post_detail' post.id %}">
         <div class="post mt-2" id="post-{{post.id}}">
-
-            <div class="post-nav mt-2">
-                <img class="profile-img ml-2" src="{{post.author.profile.profile_img.url}}"></img>
-                <div class="mt-2">
-                    <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
-                    <p class="timestamp ml-2">{{post.timestamp|naturaltime}}</p>
-                </div>
-                {% csrf_token %}
-                <button type="button" id="{{post.id}}" liked-href="{{post.get_posts_liked_url}}"
-                    data-href="{{post.get_like_api_url}}" data-likes="{{post.likes.count}}"
-                    class="like-button-ajax ml-2 btn btn-outline-success btn-sm">
-                    {{post.likes.count}} Like{{post.likes.count|pluralize}}
-                </button>
-                {% if user == post.author %}
-                <button type="button" id="{{post.id}}"
-                    class="post-edit-button ml-2 btn btn-outline-primary btn-sm">Edit</button>
-                <form method="POST" class="delete-button-ajax" id="{{post.id}}"
-                    action="{%url 'post:post_delete' post.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class=" ml-2 btn btn-outline-danger btn-sm">Delete</button>
-                </form>
-                {% endif %}
-                <div class="option-dots">
-                    <div class="dot1"></div>
-                    <div class="dot2"></div>
-                    <div class="dot3"></div>
-                </div>
-            </div>
-
-            <div class="post-content-{{post.id}} mx-2 py-1 ">
-                {% if post.should_snippet %}
-                <p id="content1-{{post.id}}">{{post.snippet}}</p>
-                <p id="show-more">show more...</p>
-                {% else %}
-                <p id="content2-{{post.id}}">{{post.content}}</p>
-                {%endif%}
-            </div>
-
-            <div class="post-edit-group post-edit-group-{{post.id}}">
-                <form class="post-edit-form" id="form-{{post.id}}" method="POST"
-                    action="{% url 'post:post_update' post.id %}">
-                    {% csrf_token %}
-                    <label>asdd</label>
-                    <input name="content" class="m-2" value="{{post.content}}" type="text" maxlength=" 300" required
-                        id="input-{{post.id}}" form="form-{{post.id}}">
-                    <div class="post-edit-form-buttons">
-                        <button type="submit" class="post-edit-submit-button btn btn-primary">Save</button>
+            <div class="post-nav post-nav-top align-items-center">
+                <div class="part-1 align-items-center">
+                    <div class="image">
+                        <img class="profile-img ml-2" src="{{post.author.profile.profile_img.url}}"></img>
                     </div>
-                </form>
+
+                    <div class="user-timestamp mt-2">
+                        <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
+                        <p class="timestamp ml-2">{{post.timestamp|naturaltime}}</p>
+                    </div>
+
+                    {% if user == post.author %}
+                    <div class="edit">
+                        <form class="post-edit-form" method="POST" action="{ %url 'post:post_update' post.id %}"
+                            pk={{post.id}}></form>
+                        <button class="post-edit-button ml-2 btn btn-sm btn-outline-primary" type="submit"
+                            id="post-edit-button-{{post.id}}" pk={{post.id}}>Edit</button>
+                    </div>
+
+                    <div class="delete">
+                        <form class="post-delete-form" method="POST" pk={{post.id}} id="{{post.id}}"
+                            action="{%url 'post:post_delete' post.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class=" ml-2 btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="part-2"></div>
+
+                <div class="post-options">
+                    <div class="post-options-dots">
+                        <div class="dot1"></div>
+                        <div class="dot2"></div>
+                        <div class="dot3"></div>
+                    </div>
+                    <div class="post-options-dropdown">
+                        {% if post.author == user %}
+                        <div class="option-item">
+                            <div class="option-image"></div>
+                            <div class="option-text"><a href="#">Edit</a></div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-image"></div>
+                            <div class="option-text">
+                                <a href="#">Delete</a>
+                            </div>
+                        </div>
+                        {% else %}
+
+                        {% if post.author in user.following %}
+                        <div class="option-item">
+                            <div class="option-image"></div>
+                            <div class="option-text">
+                                <a href="#">Stop following @{{post.author}}</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="option-item">
+                            <div class="option-image"></div>
+                            <div class="option-text"><a href="#">Share</a></div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-image"></div>
+                            <div class="option-text"><a href="#">Mute @{{post.author}}</a></div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-image"></div>
+                            <div class="option-text"><a href="#">Block @{{post.author}}</a></div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-image"></div>
+                            <div class="option-text"><a href="#">Report post</a></div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="post-content">
+
+                <div class="post-content-{{post.id}} mx-2 py-1 ">
+                    {% if post.should_snippet %}
+                    <p id="content1-{{post.id}}">{{post.snippet}}</p>
+                    <p id="show-more">show more...</p>
+                    {% else %}
+                    <p id="content2-{{post.id}}">{{post.content}}</p>
+                    {%endif%}
+                </div>
+
+                <div class="post-edit-group post-edit-group-{{post.id}}">
+                    <form class="form-group post-edit-form" method="POST" pk="{{post.id}}"
+                        action="{% url 'post:post_update' post.id %}" id="form-{{post.id}}">
+                        {% csrf_token %}
+                        <input class="form-control " name="content" class="m-2" value="{{post.content}}" type="text"
+                            maxlength=" 300" required id="input-{{post.id}}" form="form-{{post.id}}">
+                        <input name="id" value="{{post.id}}" class="d-none">
+                        <div class="post-edit-form-buttons">
+                            <button type="submit" class="post-edit-button btn btn-primary" pk={{post.id}}
+                                id="post-edit-button-{{post.id}}">Save</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="post-nav post-nav-bottom row justify-content-around p-1">
+                <div class="like">
+                    {% csrf_token %}
+                    <button type="button" id="{{post.id}}" liked-href="{{post.get_posts_liked_url}}"
+                        data-href="{{post.get_like_api_url}}" data-likes="{{post.likes.count}}"
+                        class="like-button-ajax ml-2 btn btn-outline-success btn-sm">
+                        {{post.likes.count}} Like{{post.likes.count|pluralize}}
+                    </button>
+                </div>
+
+                <div class="comment">
+                    <button class="btn btn-sm btn-outline-primary">Comments</button>
+                </div>
+                <div class="Share">
+
+                    <button class="btn btn-sm btn-outline-primary">Share</button>
+                </div>
             </div>
         </div>
     </a>
     {% endfor %}
-
 </div>
 {% endblock content %}

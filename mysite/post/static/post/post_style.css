@@ -1,0 +1,125 @@
+.posts li{
+    list-style: none;
+    
+}
+
+.post{
+    background-color: rgb(232, 232, 241);
+    border: lavender;
+    border-radius: 3px;
+}
+
+.post:hover{
+    background-color: rgb(227, 224, 255);
+}
+
+.post-nav{
+    display: flex;
+    text-transform: capitalize;
+    font-weight: bold;
+    justify-items: center;
+    text-align: center;
+}
+    
+.post-nav .part-1{
+    position: relative;
+    display: flex;
+    text-align: center;
+}
+.post-nav .part-2{
+    width: 100%;
+}
+.timestamp{
+    font-size: 12px;
+    font-weight: lighter;
+    
+}
+.post-options{
+
+    position: relative;
+    text-align: center;
+    justify-items: center;
+    justify-self: center;
+    padding: 15px;
+    right: 0px;
+    display: flex;
+    text-align: center;
+}
+.post-options-dots{
+    display: flex;
+    cursor: pointer;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.post-options-dots div{
+    width: 4px;
+    height: 4px;
+    margin: 1.5px;
+    border-radius: 50%;
+    background-color: rgb(153, 153, 153);
+}
+
+.post-options-dropdown{
+    border-radius: 2px;
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    background-color: red;
+    z-index: 1;
+    width: 15rem;
+    overflow: hidden;
+
+}
+.option-item{
+    padding: 5px;
+    display: flex;
+}
+.option-item .option-image{
+    width: 15px ;
+    background-color: chartreuse;
+}
+.option-item .option-text a{
+    color: #777;
+    padding: 5px;
+    text-align: left;
+    font-weight: lighter;
+    text-decoration: none;
+}
+
+.option-item:hover{
+    background-color: rgba(65,105,225,0.6);
+    
+}
+.post-options{
+    margin:10px;
+    padding: 8px;
+}
+.post-options:hover{
+    border-radius: 30%;
+    background-color: #4379c033
+}
+.post-options:active .post-options-dropdown {
+    background-color: rgba(244,244,244,0.7);
+    display: block;
+}
+.post-content{
+    border-top: solid;
+    border-bottom: solid;
+    border-color: rgba(244,244,244,0.7);
+    border-width: 2px;
+    padding: 10px;
+}
+.post-content p{
+    word-wrap: break-word;
+}
+.post-edit-group{
+    display: none;
+    justify-content: center;
+    text-align: center;
+    width: auto;
+    background-color: rgba(250,50, 50, 0.7);
+    
+}
+.post-edit-form-buttons{
+    display: block;
+}

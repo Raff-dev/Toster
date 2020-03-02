@@ -18,7 +18,7 @@ class Profile(models.Model):
                             null=True, validators=[letters])
     profile_img = models.ImageField(
         default='default_profile_pic.jpg', upload_to='profile_pics')
-    description = models.CharField(blank=True, max_length=300)
+    description = models.TextField(blank=True, max_length=300)
     following = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.SET_NULL, related_name='following')
     followers = models.ForeignKey(

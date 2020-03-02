@@ -25,18 +25,18 @@
 <div class="profile col-8 ">
     <div class="profile-info">
         <div class="profile-background-img"></div>
-        <div>
+        <div class="main-profile-info">
             <img class="profile-profile-img" src="{{profile.profile_img.url}}" alt="profile_img">
             <div class="username">
                 <p>{{profile.user.username}}</p>
                 <p>{{profile.alias}}</p>
                 <p>{{profile.name}}</p>
-                <p>Joined: {{profile.join_timestamp}}</p>
-                <a class="btn btn-success" href="{{profile.get_update_profile_url}}">Edit View</a>
             </div>
+            <button class="btn btn-success" href="{{profile.get_update_profile_url}}">Edit View</button>
             <button class='profile-update-modal-redirect btn btn-primary'>Edit</button>
         </div>
         <div>
+            <p>Joined: {{profile.join_timestamp}}</p>
             <p>user id:{{profile.user.id}}</p>
             <p>profile id:{{profile.id}}</p>
             <p>{{profile.description}}</p>

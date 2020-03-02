@@ -7,14 +7,18 @@ from django.db import models
 
 
 class Post(models.Model):
-    content = models.CharField(max_length=300)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(max_length=300)
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
     parent = models.ForeignKey(
-        'self', on_delete=models.CASCADE, null=True, blank=True)
-    likes = models.ManyToManyField(User, related_name='likes', blank=True)
+        'self', related_name='comment', on_delete=models.CASCADE, null=True, blank=True)
+    likes = models.ManyToManyField(
+        User, related_name='liked_post', blank=True)
+    comments = models.ManyToManyField(
+        'self', related_name='parent_post', blank=True)
 
-    snippet_length = 50
+    snippet_length = 350
 
     def __str__(self):
         return "%s's post" % self.author
