@@ -21,7 +21,7 @@ class Post(models.Model):
     snippet_length = 350
 
     def __str__(self):
-        return "%s's post" % self.author
+        return f"Post[Author:{self.author}, ID:{self.id}]"
 
     def get_absolute_url(self):
         return reverse('post:post_detail', kwargs={'pk': self.pk})

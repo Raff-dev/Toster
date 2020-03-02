@@ -24,13 +24,22 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     @log_form_data
     def form_valid(self, form):
+        new_post = form.instance
+
+        new_post.author = self.request.user
+        new_post.timestamp = timezone.now()
+
         parent_id = self.request.POST['parent']
         if parent_id:
-            form.instance.parent = Post.objects.get(pk=parent_id)
+            parent = Post.objects.get(pk=parent_id)
+            print('parent:', parent)
+            print('new_post:', new_post)
+            new_post.parent = parent
+            new_post.save()
+            parent.comments.add(new_post)
+            parent.save()
         else:
-            form.instance.parent = None
-        form.instance.author = self.request.user
-        form.instance.timestamp = timezone.now()
+            new_post.parent = None
         return super().form_valid(form)
 
 
@@ -64,8 +73,8 @@ class PostsLiked(APIView):
         data = {}
         user = self.request.user
         if user and user.is_authenticated:
-            most_recent = Post.objects.order_by('-timestamp')[:8]
-            for post in most_recent:
+            posts = Post.objects.all()
+            for post in posts:
                 data[post.id] = True if user in post.likes.all() else False
         return Response(data)
 

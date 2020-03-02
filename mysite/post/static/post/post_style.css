@@ -15,10 +15,16 @@
 
 .post-nav{
     display: flex;
-    text-transform: capitalize;
     font-weight: bold;
     justify-items: center;
     text-align: center;
+    
+}
+
+.post-nav, .post-comments .content{
+    border-bottom: solid;
+    border-color: rgba(244,244,244,0.7);
+    border-width: 2px;
 }
     
 .post-nav .part-1{
@@ -28,6 +34,17 @@
 }
 .post-nav .part-2{
     width: 100%;
+}
+.profile-img{
+    margin-left: 4px;
+    width: 60px;
+    height: 60px;
+}
+.profile-img img{
+    border-radius: 100%;
+    width: 100%;
+    height:100%;
+    object-fit: cover;
 }
 .timestamp{
     font-size: 12px;
@@ -103,7 +120,6 @@
     display: block;
 }
 .post-content{
-    border-top: solid;
     border-bottom: solid;
     border-color: rgba(244,244,244,0.7);
     border-width: 2px;
@@ -122,4 +138,13 @@
 }
 .post-edit-form-buttons{
     display: block;
+}
+
+.post-user-comment{
+    display: flex;
+    align-items: center;
+}
+.post-comments .profile-img, .post-user-comment .profile-img {
+    width: 45px;
+    height: 45px;
 }

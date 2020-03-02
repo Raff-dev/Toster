@@ -25,7 +25,7 @@ class Profile(models.Model):
         User, null=True, blank=True, on_delete=models.SET_NULL, related_name='followers')
 
     def __str__(self):
-        return f'{self.user.username} Profile'
+        return f'Profile [User:{self.user.username},ID:{self.user.id}]'
 
     def get_absolute_url(self):
         return reverse('users:profile', kwargs={'pk': self.pk})

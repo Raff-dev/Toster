@@ -5,6 +5,7 @@ function MarkLiked() {
         method: "GET",
         data: {},
         success: function (data) {
+            console.log('mark liked data:', data);
             let buttons = $(".like-button-ajax");
             for (let i = 0; i < buttons.length; i++) {
                 let id = $(buttons[i]).attr('id');
@@ -91,6 +92,37 @@ function confirmDelete(args) {
     }
 }
 
+const LikePost = () => {
+    $(".like-button-ajax").on("click", function (event) {
+        event.preventDefault();
+        var thisBtn = $(this);
+        var likeUrl = thisBtn.attr("data-href");
+        var likesCount = parseInt(thisBtn.attr("data-likes"));
+        var id = thisBtn.attr("id");
+
+        $.ajax({
+            url: likeUrl,
+            method: "GET",
+            data: {},
+            success: function (data) {
+                SetClicked(thisBtn, "success", data.liked)
+                if (data.liked) {
+                    SetLikeText(thisBtn, likesCount + 1);
+                    $(thisBtn).attr("data-likes", likesCount + 1);
+                } else {
+                    SetLikeText(thisBtn, likesCount - 1);
+                    $(thisBtn).attr("data-likes", likesCount - 1);
+                }
+                console.log(data);
+                console.log(id);
+            },
+            error: function (errorData) {
+                console.log("error")
+                console.log(errorData)
+            }
+        })
+    })
+}
 function SubmitFormAjax(
     form = null,
     preFunc = null,
@@ -130,49 +162,18 @@ function SubmitFormAjax(
             data: formData,
             success: function (data) {
                 console.log('success');
-                successFunc(successArgs);
+                if (successFunc) successFunc(successArgs);
             },
             error: function (errorData) {
                 console.log('error');
                 console.log(errorData);
-                if (errorFunc)
-                    errorFunc(errorArgs);
+                if (errorFunc) errorFunc(errorArgs);
             },
         })
     })
 }
 
-const LikePost = () => {
-    $(".like-button-ajax").on("click", function (event) {
-        event.preventDefault();
-        var thisBtn = $(this);
-        var likeUrl = thisBtn.attr("data-href");
-        var likesCount = parseInt(thisBtn.attr("data-likes"));
-        var id = thisBtn.attr("id");
 
-        $.ajax({
-            url: likeUrl,
-            method: "GET",
-            data: {},
-            success: function (data) {
-                SetClicked(thisBtn, "success", data.liked)
-                if (data.liked) {
-                    SetLikeText(thisBtn, likesCount + 1);
-                    $(thisBtn).attr("data-likes", likesCount + 1);
-                } else {
-                    SetLikeText(thisBtn, likesCount - 1);
-                    $(thisBtn).attr("data-likes", likesCount - 1);
-                }
-                console.log(data);
-                console.log(id);
-            },
-            error: function (errorData) {
-                console.log("error")
-                console.log(errorData)
-            }
-        })
-    })
-}
 
 MarkLiked();
 editOnClick();
@@ -181,4 +182,4 @@ LikePost();
 SubmitFormAjax(".post-edit-form", null, updatePostText);
 SubmitFormAjax(".post-create-form", null, resetForm);
 SubmitFormAjax(".post-delete-form", confirmDelete, deletePost);
-SubmitFormAjax(".post-comment-form");
+SubmitFormAjax(".post-comment-form", null);
