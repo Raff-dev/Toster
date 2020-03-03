@@ -46,14 +46,7 @@ nav{
     left: 4vh;
 }
 
-.profile-img{
-    background-color: white;
-    object-fit: cover;
-    width: 5vh;
-    height:5vh;
-    border-radius: 100%;
-    direction: rtl;
-}
+
 .nav-links{
     z-index: 2;
     position: absolute;

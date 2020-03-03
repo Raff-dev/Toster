@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <div class="post-content">
+            <div class="content">
                 <div class="post-content-{{post.id}} mx-2 py-1 ">
                     {% if post.should_snippet %}
                     <p id="content1-{{post.id}}">{{post.snippet}}</p>
@@ -147,30 +147,60 @@
                     </button>
                 </div>
 
-                <div class="comment">
-                    <button class="btn btn-sm btn-outline-primary">Comments</button>
+                <div class="comment-button">
+                    <button class="btn btn-sm btn-outline-primary">{{post.comments.all.count}} Comments</button>
                 </div>
                 <div class="Share">
-
                     <button class="btn btn-sm btn-outline-primary">Share</button>
                 </div>
             </div>
             {% for comment in post.comments.all %}
-            <div class="post-comments">
-                <div class="profile-img">
-                    <img src="{{comment.author.profile.profile_img.url}}" alt="{{post.author}}">
+            <div class="comments">
+                <div class="">
+                    <div class="profile-img">
+                        <img src=" {{comment.author.profile.profile_img.url}}" alt="{{post.author}}">
+                    </div>
+                    <div class="placeholder"></div>
                 </div>
 
-                <div class="content">
-                    <a class="font-weight-bold"
-                        href="{%url 'users:profile' comment.author.profile.id %}">{{comment.author}}</a>
-                    <p>{{comment.content}}</p>
+                <div class="comment">
+                    <div class="content">
+                        <p>
+                            <a class="font-weight-bold" href="{%url 'users:profile' comment.author.profile.id %}">
+                                @{{comment.author}} </a>{{comment.content}}</p>
+                    </div>
+
+                    <div class=" comment-nav d-flex justify-content-around">
+                        <div class=" like">
+                            {% csrf_token %}
+                            <button type="button" id="{{comment.id}}" liked-href="{{comment.get_posts_liked_url}}"
+                                data-href="{{comment.get_like_api_url}}" data-likes="{{comment.likes.count}}"
+                                class="like-button-ajax">
+                                Like
+                            </button>
+                        </div>
+
+                        <div class="comment-reply">
+                            <a>Reply</a>
+                        </div>
+
+                        <div class="comment-timestamp">
+                            <p>{{comment.timestamp}}</p>
+                        </div>
+
+                        <div class="comment-like d-flex">
+                            <p>Likes</p>
+                            <p>{{comment.likes.count}}</p>
+                            <img src="" alt="">
+                        </div>
+                    </div>
+
                 </div>
             </div>
             {% endfor %}
 
             {% if user.is_authenticated %}
-            <div class="post-user-comment row px-3 py-2">
+            <div class="user-comment row px-3 py-2">
                 <div class="profile-img">
                     <img class="" src="{{user.profile.profile_img.url}}" alt="{{post.author}}">
                 </div>
@@ -179,8 +209,7 @@
                     <form class="post-comment-form" pk="{{post.id}}" method="POST"
                         action="{% url 'post:post_create' %}">
                         {% csrf_token %}
-                        <input type="text" name="content" placeholder="What are your toughts on this post?"
-                            class="form-control">
+                        <input type="text" name="content" placeholder="Write a comment..." class="form-control">
                         <input type="text" name="parent" value="{{post.id}}" class="d-none">
                         <button type="submit" class="d-none"></button>
                     </form>

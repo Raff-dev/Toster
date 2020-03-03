@@ -6,7 +6,7 @@ const ProfileUpdateInfo = () => {
         var method = form.attr("method");
         var formData = new FormData(this);
         console.log('endpoint: ', endPoint);
-        console.log('form data:', formData.content);
+        console.log('form data:', formData);
         $.ajax({
             url: endPoint,
             method: method,
