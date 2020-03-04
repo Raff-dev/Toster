@@ -136,8 +136,6 @@
     padding-top: 8px;
     padding-bottom: 8px;
 }
-
-
 .post-edit-group{
     display: none;
     justify-content: center;
@@ -156,10 +154,14 @@
 .comments .profile-img, .user-comment .profile-img {
     width: 45px;
     height: 45px;
+
 }
 .user-comment .profile-img{
     margin-left: 18px;
 
+}
+.profile-img img{
+    background-color: white;
 }
 .comments{
     display: flex;

@@ -1,4 +1,4 @@
-function MarkLiked() {
+function markLiked() {
     var postsLikedUrl = $(".like-button-ajax").attr("liked-href")
     $.ajax({
         url: postsLikedUrl,
@@ -10,7 +10,7 @@ function MarkLiked() {
             for (let i = 0; i < buttons.length; i++) {
                 let id = $(buttons[i]).attr('id');
                 if (data[id] == true)
-                    SetClicked($(buttons[i]), "success", true);
+                    setClicked($(buttons[i]), "success", true);
             }
         },
         error: function (errorData) {
@@ -19,11 +19,11 @@ function MarkLiked() {
         }
     })
 }
-function SetLikeText(obj, newVal) {
+function setLikeText(obj, newVal) {
     if (newVal == 1) obj.text(newVal + " Like");
     else obj.text(newVal + " Likes");
 }
-function SetClicked(btn, type, clicked) {
+function setClicked(btn, type, clicked) {
     if (clicked) {
         var add = "btn-" + type;
         var del = "btn-outline-" + type;
@@ -92,7 +92,7 @@ function confirmDelete(args) {
     }
 }
 
-const LikePost = () => {
+const likePost = () => {
     $(".like-button-ajax").on("click", function (event) {
         event.preventDefault();
         var thisBtn = $(this);
@@ -105,12 +105,12 @@ const LikePost = () => {
             method: "GET",
             data: {},
             success: function (data) {
-                SetClicked(thisBtn, "success", data.liked)
+                setClicked(thisBtn, "success", data.liked)
                 if (data.liked) {
-                    SetLikeText(thisBtn, likesCount + 1);
+                    setLikeText(thisBtn, likesCount + 1);
                     $(thisBtn).attr("data-likes", likesCount + 1);
                 } else {
-                    SetLikeText(thisBtn, likesCount - 1);
+                    setLikeText(thisBtn, likesCount - 1);
                     $(thisBtn).attr("data-likes", likesCount - 1);
                 }
                 console.log(data);
@@ -123,7 +123,7 @@ const LikePost = () => {
         })
     })
 }
-function SubmitFormAjax(
+function submitFormAjax(
     form = null,
     preFunc = null,
     successFunc = null,
@@ -153,7 +153,8 @@ function SubmitFormAjax(
         if (pk) console.log('PK:', pk);
         else console.log('No PK given');
         jQuery.each(formDataArray, function (i, field) {
-            console.log('value(' + i + '):', field.value);
+            if (i != 0)
+                console.log('value(' + i + '):', field.value);
         });
         console.log('this1:', this);
         $.ajax({
@@ -173,13 +174,111 @@ function SubmitFormAjax(
     })
 }
 
+function loadTest() {
+    $.ajax({
+        url: 'post/post_template',
+        method: 'GET',
+        context: {},
+        success: function (response) {
+            $("#logo").html(response);
+            console.log('response', response)
+        }
+    })
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        logo.innerHTML = this.response;
+        console.log(this.response)
+    };
+    xhr.open('GET', '/', false);
+    xhr.send();
+}
 
 
-MarkLiked();
+var postsLoaded = 2;
+const append = 1;
+const prepend = 2;
+
+
+
+
+function dataApiQuery(query, args = null) {
+    var template = 'post/post_template/';
+    var node = $('.load-post').attr('node');
+    var mode = $('.load-post').attr('mode');
+    $.ajax({
+        url: 'post/data_api/',
+        method: 'POST',
+        data: {
+            'query': query,
+            'args': 'args',
+            // 'query': query,
+            // 'args': args,
+        },
+        success: function (response) {
+            console.log('query succesfull');
+            console.log('response', response);
+            var lim = postsLoaded + 3;
+            for (; postsLoaded <= lim; postsLoaded++) {
+                console.log(postsLoaded, '- ID:', response[postsLoaded])
+                appendPost(document.getElementById('post'), 1, response[postsLoaded]);
+            }
+            //return response;
+        },
+        error: function (errorData) {
+            console.log('query error');
+            console.log('errorData:', errorData);
+        }
+    })
+}
+
+
+function appendPost(node, mode, post_id, parent_id = null) {
+    let url = 'post/post_template/' + post_id
+    $.ajax({
+        url: url,
+        method: 'GET',
+        data: {},
+        success: function (response) {
+            console.log('successfully appended post:', post_id);
+            console.log('response', typeof (response))
+            let post = document.createElement('div')
+            post.innerHTML = response
+            switch (mode) {
+                case (append):
+                    console.log('mode:append')
+                    node.append(post);
+                    break;
+                case (preprend):
+                    console.log('mode:prepend')
+                    node.prepend(post);
+                    break;
+                default: console.log('Wrong mode value');
+            }
+        },
+        error: function (errorData) {
+            console.log('error');
+            console.log(errorData);
+        }
+    })
+}
+$('#append-post').submit(function (event) {
+    event.preventDefault();
+    appendPost(document.getElementById('post'), 1, 120);
+
+})
+//appendPost(template, node, mode, response[postsLoaded]);
+
+$('.load-post').on('click', function (event) {
+    event.preventDefault();
+    dataApiQuery('posts_ids_list', {});
+})
+
+markLiked();
 editOnClick();
-LikePost();
+likePost();
 
-SubmitFormAjax(".post-edit-form", null, updatePostText);
-SubmitFormAjax(".post-create-form", null, resetForm);
-SubmitFormAjax(".post-delete-form", confirmDelete, deletePost);
-SubmitFormAjax(".post-comment-form", null);
+submitFormAjax(".post-edit-form", null, updatePostText);
+submitFormAjax(".post-create-form", null, resetForm);
+submitFormAjax(".post-delete-form", confirmDelete, deletePost);
+submitFormAjax(".post-comment-form", null);

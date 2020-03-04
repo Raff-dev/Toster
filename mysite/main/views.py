@@ -12,4 +12,5 @@ def main(request):
         'post_form': PostForm,
         'posts_all': posts_all,
     }
+
     return render(request, 'main/home.html', context)

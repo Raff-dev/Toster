@@ -1,11 +1,11 @@
+import json
+from django.core import serializers
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
-    DetailView, CreateView, ListView, FormView, DeleteView, UpdateView)
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
+    DetailView, CreateView, ListView, FormView, DeleteView, UpdateView, TemplateView)
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from .serializers import PostSerializer
 from .models import Post
 from main.decorators import log_form_data
 from rest_framework.views import APIView
@@ -68,25 +68,14 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == post.author
 
 
-class PostsLiked(APIView):
-    def get(self, request, format=None, *args, **kwargs,):
-        data = {}
-        user = self.request.user
-        if user and user.is_authenticated:
-            posts = Post.objects.all()
-            for post in posts:
-                data[post.id] = True if user in post.likes.all() else False
-        return Response(data)
-
-
 class PostLikeAPIToggle(APIView):
     authentication_classes = (authentication.SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, format=None, *args, **kwargs,):
+        print('IM HEEEREEE')
         user = self.request.user
         post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
-        liked = False
 
         if user in post.likes.all():
             post.likes.remove(user)
@@ -101,3 +90,93 @@ class PostLikeAPIToggle(APIView):
         }
         print('data: ', data)
         return Response(data)
+
+
+class PostsLiked(APIView):
+    def get(self, request, format=None, *args, **kwargs,):
+        data = {}
+        user = self.request.user
+        if user and user.is_authenticated:
+            posts = Post.objects.all()
+            for post in posts:
+                data[post.id] = user in post.likes.all()
+        return Response(data)
+
+
+class PostDataApi(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+
+    def post(self, request, format=None, *args, **kwargs):
+        print(request.POST)
+        query = request.POST['query']
+        query_kwargs = request.POST['args']
+
+        response = self.query_dict[query](query_kwargs)
+        return Response(response)
+
+    def get_post_list(self, **kwargs):
+        posts = Post.objects.all()
+        serializer = PostSerializer(posts, many=True)
+        return serializer
+
+    def get_posts_ids_list(self, **kwargs):
+        posts_ids = {}
+        posts = Post.objects.all().filter(
+            parent=None).order_by('-timestamp')
+        count = posts.count()
+        print('thats a count: ', count)
+        for post, i in zip(posts, range(count)):
+            posts_ids[i] = post.id
+        # [post.id for post in Post.objects.all().filter(
+        # parent = None).order_by('-timestamp')]
+        print('posts ids:', posts_ids)
+        return posts_ids
+
+    def get_comment_list(self, **kwargs):
+        posts_ids = [post.id for post in Post.objects.all().filter(
+            parent=kwargs['parent_id']).order_by('-timestamp')]
+        print('comments ids:', posts_ids)
+        return posts_ids
+
+    query_dict = {
+        'posts_ids_list': get_posts_ids_list,
+        'comment_list': get_comment_list,
+    }
+
+
+# class PostTemplate(TemplateView):
+#     authentication_classes = (authentication.TokenAuthentication,)
+#     template_name = 'post/post_template.html'
+
+#     def get_context_data(self, **kwargs):
+#         context = super(PostTemplate, self).get_context_data(**kwargs)
+#         print(self.request)
+#         print(self.request.POST)
+#         print(self.request.FILES)
+#         print(self.kwargs)
+#         print(self.request.method == 'POST')
+#         if 'post_id' in self.kwargs:
+#             post = get_object_or_404(Post, pk=self.kwargs['post_id'])
+#             print(post)
+#             context['post'] = post
+#         else:
+#             print('ERROR: Post id not specified')
+#             post = get_object_or_404(Post, pk=113)
+#             context['post'] = post
+#         return context
+
+class PostTemplate(DetailView):
+    model = Post
+    template_name = 'post/post_template.html'
+
+    def get_context_data(self, **kwargs):
+        print('REQUEST', self.request)
+        print('KWARGS', self.kwargs)
+        context = super(PostTemplate, self).get_context_data(**kwargs)
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        print('this should be a post', post)
+        if post.parent:
+            print('thats a comment')
+            context['post'] = post.parent
+            context['comment'] = post
+        return context
