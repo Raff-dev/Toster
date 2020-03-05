@@ -21,6 +21,8 @@ class Post(models.Model):
     snippet_length = 350
 
     def __str__(self):
+        if self.parent:
+            return f"Post[Author:{self.author}, ID:{self.id}, Parent ID:{self.parent.id}]"
         return f"Post[Author:{self.author}, ID:{self.id}]"
 
     def get_absolute_url(self):
@@ -37,3 +39,6 @@ class Post(models.Model):
 
     def snippet(self):
         return self.content[:self.snippet_length]
+
+    def is_comment_reply(self):
+        return self.parent.parent is not None

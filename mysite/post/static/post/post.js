@@ -1,179 +1,3 @@
-function markLiked() {
-    var postsLikedUrl = $(".like-button-ajax").attr("liked-href")
-    $.ajax({
-        url: postsLikedUrl,
-        method: "GET",
-        data: {},
-        success: function (data) {
-            console.log('mark liked data:', data);
-            let buttons = $(".like-button-ajax");
-            for (let i = 0; i < buttons.length; i++) {
-                let id = $(buttons[i]).attr('id');
-                if (data[id] == true)
-                    setClicked($(buttons[i]), "success", true);
-            }
-        },
-        error: function (errorData) {
-            console.log("error")
-            console.log(errorData)
-        }
-    })
-}
-function setLikeText(obj, newVal) {
-    if (newVal == 1) obj.text(newVal + " Like");
-    else obj.text(newVal + " Likes");
-}
-function setClicked(btn, type, clicked) {
-    if (clicked) {
-        var add = "btn-" + type;
-        var del = "btn-outline-" + type;
-    }
-    else {
-        var add = "btn-outline-" + type;
-        var del = "btn-" + type;
-    }
-    btn.addClass(add);
-    btn.removeClass(del);
-}
-function resetForm(args) {
-    console.log("successfully reseting");
-    console.log('reset pk:', args['pk']);
-    var form = args['form'];
-    form.reset();
-}
-function updatePostText(args) {
-    console.log("succesfully updating post");
-    console.log('update post pk:', pk);
-    var pk = args['pk'];
-    var text = document.getElementById("input-" + pk).value;
-    $(document.getElementById("content1-" + pk)).text(text);
-    $(document.getElementById("content2-" + pk)).text(text);
-    closeEdit(pk);
-}
-function closeEdit(pk) {
-    var button = document.querySelector("#post-edit-button-" + pk);
-    console.log('closing', pk);
-    document.querySelector(".post-edit-group-" + pk).style.display = 'none';
-    document.querySelector(".post-content-" + pk).style.display = 'flex';
-    $(button).text('Edit');
-    button.classList.add('btn-outline-primary');
-    button.classList.remove('btn-primary');
-}
-function editOnClick() {
-    $(".post-edit-button").on("click", function (event) {
-        var pk = $(this).attr("pk")
-        console.log('pk:', pk);
-        if (this.innerText == 'Edit') {
-            document.querySelector(".post-edit-group-" + pk).style.display = 'flex';
-            document.querySelector(".post-content-" + pk).style.display = 'none';
-            $(this).text('Close');
-            console.log('opening');
-            this.classList.add('btn-primary');
-            this.classList.remove('btn-outline-primary');
-        } else closeEdit(pk);
-    });
-}
-function deletePost(args) {
-    var pk = args['pk']
-    console.log('i got his PK!:', pk);
-    var post = document.getElementById("post-" + pk);
-    console.log('deletepost func pk', pk);
-    console.log(post.parentNode);
-    post.parentNode.removeChild(post);
-    console.log("success");
-}
-function confirmDelete(args) {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-        console.log('Deletion confirmed');
-        return true;
-    } else {
-        console.log('Deletion denied');
-        return false;
-    }
-}
-
-const likePost = () => {
-    $(".like-button-ajax").on("click", function (event) {
-        event.preventDefault();
-        var thisBtn = $(this);
-        var likeUrl = thisBtn.attr("data-href");
-        var likesCount = parseInt(thisBtn.attr("data-likes"));
-        var id = thisBtn.attr("id");
-
-        $.ajax({
-            url: likeUrl,
-            method: "GET",
-            data: {},
-            success: function (data) {
-                setClicked(thisBtn, "success", data.liked)
-                if (data.liked) {
-                    setLikeText(thisBtn, likesCount + 1);
-                    $(thisBtn).attr("data-likes", likesCount + 1);
-                } else {
-                    setLikeText(thisBtn, likesCount - 1);
-                    $(thisBtn).attr("data-likes", likesCount - 1);
-                }
-                console.log(data);
-                console.log(id);
-            },
-            error: function (errorData) {
-                console.log("error")
-                console.log(errorData)
-            }
-        })
-    })
-}
-function submitFormAjax(
-    form = null,
-    preFunc = null,
-    successFunc = null,
-    errorFunc = null,
-    preArgs = {},
-    successArgs = {},
-    errorArgs = {},
-) {
-    $(form).submit(function (event) {
-        event.preventDefault();
-
-        if (preFunc)
-            if (preFunc(preArgs) == false)
-                return 0;
-
-        var pk = $(this).attr("pk");
-        var method = $(this).attr("method");
-        var endPoint = $(this).attr("action");
-        var formData = $(this).serialize();
-        var formDataArray = $(this).serializeArray();
-
-        successArgs['pk'] = pk;
-        successArgs['form'] = this;
-        errorArgs['pk'] = pk;
-        errorArgs['form'] = this;
-
-        if (pk) console.log('PK:', pk);
-        else console.log('No PK given');
-        jQuery.each(formDataArray, function (i, field) {
-            if (i != 0)
-                console.log('value(' + i + '):', field.value);
-        });
-        console.log('this1:', this);
-        $.ajax({
-            url: endPoint,
-            method: method,
-            data: formData,
-            success: function (data) {
-                console.log('success');
-                if (successFunc) successFunc(successArgs);
-            },
-            error: function (errorData) {
-                console.log('error');
-                console.log(errorData);
-                if (errorFunc) errorFunc(errorArgs);
-            },
-        })
-    })
-}
-
 function loadTest() {
     $.ajax({
         url: 'post/post_template',
@@ -193,55 +17,212 @@ function loadTest() {
     xhr.open('GET', '/', false);
     xhr.send();
 }
-
-
-var postsLoaded = 2;
-const append = 1;
-const prepend = 2;
-
-
-
-
-function dataApiQuery(query, args = null) {
-    var template = 'post/post_template/';
-    var node = $('.load-post').attr('node');
-    var mode = $('.load-post').attr('mode');
+function markLiked(post_id) {
+    var button = document.getElementById("like-button-" + post_id);
+    var url = $(button).attr('is-liked')
     $.ajax({
-        url: 'post/data_api/',
-        method: 'POST',
+        url: url,
+        method: "GET",
+        data: {},
+        success: function (liked) {
+            console.log('ID: ', post_id, ' liked:', liked);
+            if (liked) setClicked(button, "success");
+        },
+        error: function (errorData) {
+            console.log("error")
+            console.log(errorData)
+        }
+    })
+}
+function setLikeText(obj, newVal) {
+    if (newVal == 1) $(obj).text(newVal + " Like");
+    else $(obj).text(newVal + " Likes");
+}
+function setClicked(button, type) {
+    $(button).toggleClass("btn-outline-" + type);
+    $(button).toggleClass("btn-" + type);
+}
+function confirmDelete(args) {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+        console.log('Deletion confirmed');
+        return true;
+    } else {
+        console.log('Deletion denied');
+        return false;
+    }
+}
+function closeEdit(post_id) {
+    var button = document.querySelector("#edit-button-" + post_id);
+    console.log('closing', post_id);
+    document.querySelector("#edit-group-" + post_id).style.display = 'none';
+    document.querySelector("#content-" + post_id).style.display = 'flex';
+    $(button).text('Edit');
+    setClicked(this, 'primary');
+}
+function editOnClick(post_id) {
+    $("#edit-button-" + post_id).on("click", function (event) {
+        console.log('post_id:', post_id);
+        if (this.innerText == 'Edit') {
+            document.querySelector("#edit-group-" + post_id).style.display = 'flex';
+            document.querySelector("#content-" + post_id).style.display = 'none';
+            $(this).text('Close');
+            console.log('opening');
+        } else closeEdit(post_id);
+        setClicked(this, 'primary');
+    });
+}
+function submitFormAjax(
+    form = null,
+    preFunc = null,
+    successFunc = null,
+    preArgs = {},
+    successArgs = {},
+) {
+    $(form).submit(function (event) {
+        event.preventDefault();
+
+        if (preFunc)
+            if (preFunc(preArgs) == false)
+                return 0;
+
+        var post_id = $(this).attr("post_id");
+        var method = $(this).attr("method");
+        var endPoint = $(this).attr("action");
+        console.log('url:', endPoint)
+        var formData = $(this).serialize();
+        var formDataArray = $(this).serializeArray();
+
+        successArgs['post_id'] = post_id;
+        successArgs['form'] = this;
+        successArgs['data'] = formDataArray
+
+        if (post_id) console.log('post_id:', post_id);
+        else console.log('No post_id given');
+        jQuery.each(formDataArray, function (i, field) {
+            if (i != 0)
+                console.log('value(' + i + '):', field.value);
+        });
+        $.ajax({
+            url: endPoint,
+            method: method,
+            data: formData,
+            success: function (data) {
+                console.log('data from submiting post', data)
+                console.log('success');
+                if (successFunc) successFunc(successArgs, data);
+            },
+            error: function (errorData) {
+                console.log('error');
+                console.log(errorData);
+            },
+        })
+    })
+}
+function postCreated(args, response) {
+    var post_id = response['id'];
+    var form = args['form'];
+    form.reset();
+    var parent_id = response['parent'];
+    if (parent_id) {
+        console.log('Comment Created: ', post_id, 'Parent: ', parent_id);
+        appendPost(document.getElementById("comments-" + parent_id), append, post_id, parent_id);
+    }
+    else {
+        console.log('Post Created: ', post_id);
+        appendPost(document.getElementById('posts'), prepend, post_id);
+    }
+    submitFormAjax("#edit-form-" + post_id, null, postUpdated);
+    submitFormAjax("#delete-form-" + post_id, confirmDelete, postDeleted);
+    submitFormAjax("#comment-form-" + post_id, null, postCreated);
+}
+function postLiked(args, response) {
+    var post_id = response['id'];
+    console.log('post liked id', post_id);
+    var button = document.getElementById("like-button-" + post_id);
+    console.log('button', button);
+    var likes_count = parseInt($(button).attr('likes-count'));
+    console.log('likes count:', likes_count);
+    setClicked(button, "success");
+    if (response['liked']) {
+        setLikeText(button, likes_count + 1);
+        $(button).attr("likes-count", likes_count + 1);
+    } else {
+        setLikeText(button, likes_count - 1);
+        $(button).attr("likes-count", likes_count - 1);
+    }
+}
+function postDeleted(args, response) {
+    var post_id = args['post_id']
+    var post = document.getElementById("post-" + post_id);
+    if (!post) post = document.getElementById("comment-" + post_id)
+    console.log('Deleting: ', post_id);
+    console.log(post.parentNode);
+    post.parentNode.removeChild(post);
+}
+function postUpdated(args, response) {
+    var id = args['post_id'];
+    console.log('update post id:', id);
+    var text = document.getElementById("input-" + id).value;
+    $(document.getElementById("content1-" + id)).text(text);
+    $(document.getElementById("content2-" + id)).text(text);
+    closeEdit(id);
+}
+function apiRequest(query, url, method, args = null) {
+    var result = NaN;
+    $.ajax({
+        url: url,
+        method: method,
+        async: false,
         data: {
             'query': query,
-            'args': 'args',
+            'args': args,
             // 'query': query,
             // 'args': args,
         },
         success: function (response) {
             console.log('query succesfull');
-            console.log('response', response);
-            var lim = postsLoaded + 3;
-            for (; postsLoaded <= lim; postsLoaded++) {
-                console.log(postsLoaded, '- ID:', response[postsLoaded])
-                appendPost(document.getElementById('post'), 1, response[postsLoaded]);
-            }
-            //return response;
+            console.log('response', response['1']);
+            result = response;
         },
         error: function (errorData) {
             console.log('query error');
             console.log('errorData:', errorData);
         }
     })
+    return result;
 }
+function loadPosts(count, destination) {
+    var postsLoaded = document.getElementsByClassName(destination).length
+    console.log('posts count', postsLoaded);
+    let postsIds = apiRequest('posts_ids_list', 'post/data_api/', 'POST');
+    console.log('those should be posts ids', postsIds)
+    // jQuery.each(postsIds.serializeArray(), function (i, field) {
+    //     console.log('value(' + i + '):', field.value);
+    // });
+    var lim = postsLoaded + count
+    for (; postsLoaded < lim; postsLoaded++) {
+        let post_id = postsIds[postsLoaded];
+        console.log(postsLoaded, '- ID:', postsIds[postsLoaded], 'or', post_id)
+        appendPost(document.getElementById(destination), append, postsIds[postsLoaded]);
+        if (destination == 'posts') {
+            let comments_ids = apiRequest(null, '/post/api/post/' + post_id, 'GET')['comments'];
+            for (let i = 0; i < comments_ids.length; i++) {
+                let comment_id = comments_ids[i];
+                appendPost(document.getElementById('comments-' + post_id), append, comment_id);
 
-
-function appendPost(node, mode, post_id, parent_id = null) {
+            }
+        }
+    }
+}
+function appendPost(node, mode, post_id, is_comment = null) {
     let url = 'post/post_template/' + post_id
     $.ajax({
         url: url,
         method: 'GET',
+        async: false,
         data: {},
         success: function (response) {
-            console.log('successfully appended post:', post_id);
-            console.log('response', typeof (response))
+            console.log('Appending post:', post_id, ' to node\n', node);
             let post = document.createElement('div')
             post.innerHTML = response
             switch (mode) {
@@ -249,12 +230,14 @@ function appendPost(node, mode, post_id, parent_id = null) {
                     console.log('mode:append')
                     node.append(post);
                     break;
-                case (preprend):
+                case (prepend):
                     console.log('mode:prepend')
                     node.prepend(post);
                     break;
                 default: console.log('Wrong mode value');
             }
+            addListeners(post_id);
+            markLiked(post_id);
         },
         error: function (errorData) {
             console.log('error');
@@ -262,23 +245,19 @@ function appendPost(node, mode, post_id, parent_id = null) {
         }
     })
 }
-$('#append-post').submit(function (event) {
-    event.preventDefault();
-    appendPost(document.getElementById('post'), 1, 120);
+function addListeners(post_id) {
+    submitFormAjax("#edit-form-" + post_id, null, postUpdated);
+    submitFormAjax("#delete-form-" + post_id, confirmDelete, postDeleted);
+    submitFormAjax("#comment-form-" + post_id, null, postCreated);
+    submitFormAjax("#like-form-" + post_id, null, postLiked);
+    editOnClick(post_id);
 
-})
-//appendPost(template, node, mode, response[postsLoaded]);
+}
+const prepend = 0;
+const append = 1;
 
-$('.load-post').on('click', function (event) {
-    event.preventDefault();
-    dataApiQuery('posts_ids_list', {});
-})
-
-markLiked();
-editOnClick();
-likePost();
-
-submitFormAjax(".post-edit-form", null, updatePostText);
-submitFormAjax(".post-create-form", null, resetForm);
-submitFormAjax(".post-delete-form", confirmDelete, deletePost);
-submitFormAjax(".post-comment-form", null);
+$(document).ready(function () {
+    submitFormAjax(".post-create-form", null, postCreated);
+    console.log('READY')
+    loadPosts(5, 'posts');
+});

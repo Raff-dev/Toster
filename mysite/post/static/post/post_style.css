@@ -13,27 +13,22 @@
     background-color: rgb(227, 224, 255);
 }
 
-.post-nav{
-    display: flex;
-    font-weight: bold;
-    justify-items: center;
-    text-align: center;
-    
-}
-
-.post-nav, .post-comments .content{
+.post .nav, .post .comments .content{
     border-bottom: solid;
     border-color: rgba(244,244,244,0.7);
     border-width: 2px;
 }
-    
-.post-nav .part-1{
-    position: relative;
+.post .nav-top{
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}  
+.post .nav .part-1{
     display: flex;
     text-align: center;
+    
 }
-.post-nav .part-2{
-    width: 100%;
+.post .nav .part-2{
 }
 .profile-img{
     margin-left: 4px;
@@ -51,10 +46,8 @@
 .timestamp{
     font-size: 12px;
     font-weight: lighter;
-    
 }
-.post-options{
-
+.post .options{
     position: relative;
     text-align: center;
     justify-items: center;
@@ -64,13 +57,13 @@
     display: flex;
     text-align: center;
 }
-.post-options-dots{
+.post .options-dots{
     display: flex;
     cursor: pointer;
     padding-top: 5px;
     padding-bottom: 5px;
 }
-.post-options-dots div{
+.post .options-dots div{
     width: 4px;
     height: 4px;
     margin: 1.5px;
@@ -78,7 +71,7 @@
     background-color: rgb(153, 153, 153);
 }
 
-.post-options-dropdown{
+.post .options-dropdown{
     border-radius: 2px;
     position: absolute;
     display: none;
@@ -109,15 +102,15 @@
     background-color: rgba(65,105,225,0.6);
     
 }
-.post-options{
+.post .options{
     margin: 10px;
     padding: 8px;
 }
-.post-options:hover{
+.post .options:hover{
     border-radius: 30%;
     background-color: #4379c033
 }
-.post-options:active .post-options-dropdown {
+.post .options:active .options-dropdown {
     background-color: rgba(244,244,244,0.7);
     display: block;
 }
@@ -136,7 +129,7 @@
     padding-top: 8px;
     padding-bottom: 8px;
 }
-.post-edit-group{
+.post .edit-group{
     display: none;
     justify-content: center;
     text-align: center;
@@ -144,7 +137,7 @@
     background-color: rgba(250,50, 50, 0.7);
     
 }
-.post-edit-form-buttons{
+.post .edit-form-button{
     display: block;
 }
 .user-comment{
@@ -163,13 +156,12 @@
 .profile-img img{
     background-color: white;
 }
-.comments{
+
+.comment{
     display: flex;
     padding-left: 12px;
     padding-right: 12px;
     padding-top:12px;
-}
-.comment{
 }
 .placeholder{
     width:100%;
