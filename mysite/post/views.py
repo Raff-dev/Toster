@@ -45,11 +45,18 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     @log_form_data
     def form_valid(self, form):
         form.instance.author = self.request.user
+
         return super().form_valid(form)
 
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        print('KWARGS', kwargs)
+        print('POST', request.POST)
+        return super().post(request, *args, **kwargs)
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

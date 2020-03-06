@@ -86,7 +86,7 @@
 </div>
 
 <div class="content">
-    <div class="content mx-2 py-1 " id="content-{{post.id}}">
+    <div class="content mx-2 py-1 " id="content-div-{{post.id}}">
         {% if post.should_snippet %}
         <p id="content1-{{post.id}}">{{post.snippet}}</p>
         <p id="show-more">show more...</p>
@@ -101,8 +101,8 @@
             action="{% url 'post:post_update' post.id %}" id="edit-form-{{post.id}}">
             {% csrf_token %}
             <input class="form-control " name="content" class="m-2" value="{{post.content}}" type="text"
-                maxlength=" 300" required id="input-{{post.id}}" form="form-{{post.id}}">
-            <input name="id" value="{{post.id}}" class="d-none">
+                maxlength=" 300" required id="input-{{post.id}}"">
+            <input name=" id" value="{{post.id}}" class="d-none">
             <div class="edit-form-button">
                 <button type="submit" class="save-button btn btn-primary" post_id={{post.id}}
                     id="save-button-{{post.id}}">Save</button>

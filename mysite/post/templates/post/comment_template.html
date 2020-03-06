@@ -9,23 +9,24 @@
     </div>
 
     <div class="right">
-        <div class="content" id="content-{{comment.id}}">
-            <p>
-                <a class=" font-weight-bold" href="{%url 'users:profile' comment.author.profile.id %}">
-                    @{{comment.author}} </a>{{comment.content}}</p>
+        <div class="content" id="content-div-{{comment.id}}">
+            <p id="content-{{comment.id}}" comment="yes">
+                <a class=" font-weight-bold" id="at-author-{{comment.id}}"
+                    href="{%url 'users:profile' comment.author.profile.id %}">@{{comment.author}}</a>
+                {{comment.content}}</p>
         </div>
 
-        {% if post.author == user%}
+        {% if comment.author == user%}
         <div class="edit-group" id="edit-group-{{comment.id}}">
             <form class="form-group edit-form" method="POST" post_id="{{comment.id}}"
                 action="{% url 'post:post_update' comment.id %}" id="edit-form-{{comment.id}}">
                 {% csrf_token %}
                 <input class="form-control " name="content" class="m-2" value="{{comment.content}}" type="text"
-                    maxlength=" 300" required id="input-{{comment.id}}" form="form-{{comment.id}}">
+                    maxlength=" 300" required id="input-{{comment.id}}">
                 <input name="id" value="{{comment.id}}" class="d-none">
                 <div class="edit-form-button">
-                    <button type="submit" class="edit-button btn btn-primary" post_id={{post.id}}
-                        id="save-button-{{post.id}}">Save</button>
+                    <button type="submit" class="edit-button btn btn-primary" post_id={{comment.id}}
+                        id="save-button-{{comment.id}}">Save</button>
                 </div>
             </form>
         </div>

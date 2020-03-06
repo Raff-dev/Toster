@@ -25,7 +25,6 @@ function markLiked(post_id) {
         method: "GET",
         data: {},
         success: function (liked) {
-            console.log('ID: ', post_id, ' liked:', liked);
             if (liked) setClicked(button, "success");
         },
         error: function (errorData) {
@@ -53,22 +52,22 @@ function confirmDelete(args) {
 }
 function closeEdit(post_id) {
     var button = document.querySelector("#edit-button-" + post_id);
-    console.log('closing', post_id);
     document.querySelector("#edit-group-" + post_id).style.display = 'none';
-    document.querySelector("#content-" + post_id).style.display = 'flex';
+    let content = document.querySelector("#content-div-" + post_id)
+
+    content.style.display = 'flex';
     $(button).text('Edit');
-    setClicked(this, 'primary');
+    setClicked(button, 'primary');
 }
 function editOnClick(post_id) {
     $("#edit-button-" + post_id).on("click", function (event) {
-        console.log('post_id:', post_id);
+        console.log('post_idd:', post_id);
         if (this.innerText == 'Edit') {
             document.querySelector("#edit-group-" + post_id).style.display = 'flex';
-            document.querySelector("#content-" + post_id).style.display = 'none';
+            document.querySelector("#content-div-" + post_id).style.display = 'none';
             $(this).text('Close');
-            console.log('opening');
+            setClicked(this, 'primary');
         } else closeEdit(post_id);
-        setClicked(this, 'primary');
     });
 }
 function submitFormAjax(
@@ -99,15 +98,14 @@ function submitFormAjax(
         if (post_id) console.log('post_id:', post_id);
         else console.log('No post_id given');
         jQuery.each(formDataArray, function (i, field) {
-            if (i != 0)
-                console.log('value(' + i + '):', field.value);
+            console.log('value(' + i + '):', field.value);
         });
         $.ajax({
             url: endPoint,
             method: method,
             data: formData,
             success: function (data) {
-                console.log('data from submiting post', data)
+                // console.log('data from submiting post', data)
                 console.log('success');
                 if (successFunc) successFunc(successArgs, data);
             },
@@ -124,11 +122,9 @@ function postCreated(args, response) {
     form.reset();
     var parent_id = response['parent'];
     if (parent_id) {
-        console.log('Comment Created: ', post_id, 'Parent: ', parent_id);
         appendPost(document.getElementById("comments-" + parent_id), append, post_id, parent_id);
     }
     else {
-        console.log('Post Created: ', post_id);
         appendPost(document.getElementById('posts'), prepend, post_id);
     }
     submitFormAjax("#edit-form-" + post_id, null, postUpdated);
@@ -137,11 +133,8 @@ function postCreated(args, response) {
 }
 function postLiked(args, response) {
     var post_id = response['id'];
-    console.log('post liked id', post_id);
     var button = document.getElementById("like-button-" + post_id);
-    console.log('button', button);
     var likes_count = parseInt($(button).attr('likes-count'));
-    console.log('likes count:', likes_count);
     setClicked(button, "success");
     if (response['liked']) {
         setLikeText(button, likes_count + 1);
@@ -160,12 +153,16 @@ function postDeleted(args, response) {
     post.parentNode.removeChild(post);
 }
 function postUpdated(args, response) {
-    var id = args['post_id'];
-    console.log('update post id:', id);
-    var text = document.getElementById("input-" + id).value;
-    $(document.getElementById("content1-" + id)).text(text);
-    $(document.getElementById("content2-" + id)).text(text);
-    closeEdit(id);
+    let post_id = args['post_id'];
+    let authorHref = document.getElementById('at-author-' + post_id)
+    var text = document.getElementById("input-" + post_id).value;
+    $(document.getElementById("content1-" + post_id)).text(text);
+    $(document.getElementById("content2-" + post_id)).text(text);
+    let content = $(document.getElementById("content-" + post_id))
+    $(document.getElementById("content-" + post_id)).text(' ' + text);
+    if (content.attr('comment') == 'yes')
+        document.getElementById("content-" + post_id).prepend(authorHref);
+    closeEdit(post_id);
 }
 function apiRequest(query, url, method, args = null) {
     var result = NaN;
@@ -192,24 +189,22 @@ function apiRequest(query, url, method, args = null) {
     return result;
 }
 function loadPosts(count, destination) {
-    var postsLoaded = document.getElementsByClassName(destination).length
-    console.log('posts count', postsLoaded);
-    let postsIds = apiRequest('posts_ids_list', 'post/data_api/', 'POST');
-    console.log('those should be posts ids', postsIds)
-    // jQuery.each(postsIds.serializeArray(), function (i, field) {
-    //     console.log('value(' + i + '):', field.value);
-    // });
-    var lim = postsLoaded + count
-    for (; postsLoaded < lim; postsLoaded++) {
-        let post_id = postsIds[postsLoaded];
-        console.log(postsLoaded, '- ID:', postsIds[postsLoaded], 'or', post_id)
-        appendPost(document.getElementById(destination), append, postsIds[postsLoaded]);
-        if (destination == 'posts') {
-            let comments_ids = apiRequest(null, '/post/api/post/' + post_id, 'GET')['comments'];
-            for (let i = 0; i < comments_ids.length; i++) {
-                let comment_id = comments_ids[i];
-                appendPost(document.getElementById('comments-' + post_id), append, comment_id);
-
+    let posts_ids = apiRequest('posts_ids_list', 'post/data_api/', 'POST');
+    if (posts_ids[Object.keys(posts_ids).length - 1]) {
+        var posts_loaded = document.getElementById(destination).childElementCount
+        var lim = posts_loaded + count
+        for (; posts_loaded < lim; posts_loaded++) {
+            let post_id = posts_ids[posts_loaded];
+            appendPost(document.getElementById(destination), append, posts_ids[posts_loaded]);
+            if (destination == 'posts') {
+                let comments_ids = apiRequest(null, '/post/api/post/' + post_id, 'GET')['comments'];
+                if (comments_ids.length) {
+                    let comments_loaded = document.getElementById('comments-' + post_id).childElementCount
+                    for (; comments_loaded < comments_ids.length; comments_loaded++) {
+                        let comment_id = comments_ids[comments_loaded];
+                        appendPost(document.getElementById('comments-' + post_id), append, comment_id);
+                    }
+                }
             }
         }
     }
@@ -222,19 +217,16 @@ function appendPost(node, mode, post_id, is_comment = null) {
         async: false,
         data: {},
         success: function (response) {
-            console.log('Appending post:', post_id, ' to node\n', node);
             let post = document.createElement('div')
             post.innerHTML = response
             switch (mode) {
                 case (append):
-                    console.log('mode:append')
                     node.append(post);
                     break;
                 case (prepend):
-                    console.log('mode:prepend')
                     node.prepend(post);
                     break;
-                default: console.log('Wrong mode value');
+                default: ;
             }
             addListeners(post_id);
             markLiked(post_id);
@@ -251,13 +243,20 @@ function addListeners(post_id) {
     submitFormAjax("#comment-form-" + post_id, null, postCreated);
     submitFormAjax("#like-form-" + post_id, null, postLiked);
     editOnClick(post_id);
-
 }
+
 const prepend = 0;
 const append = 1;
 
 $(document).ready(function () {
     submitFormAjax(".post-create-form", null, postCreated);
-    console.log('READY')
     loadPosts(5, 'posts');
+});
+
+window.addEventListener('scroll', function (e) {
+    let diff = document.getElementById('body').offsetHeight - (window.scrollY + window.innerHeight);
+    if (diff < document.getElementById('footer').offsetHeight) loadPosts(3, 'posts');
+
+    window.requestAnimationFrame(function () {
+    });
 });
