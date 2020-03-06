@@ -189,21 +189,18 @@ function apiRequest(query, url, method, args = null) {
     return result;
 }
 function loadPosts(count, destination) {
-    let posts_ids = apiRequest('posts_ids_list', 'post/data_api/', 'POST');
-    if (posts_ids[Object.keys(posts_ids).length - 1]) {
-        var posts_loaded = document.getElementById(destination).childElementCount
-        var lim = posts_loaded + count
-        for (; posts_loaded < lim; posts_loaded++) {
-            let post_id = posts_ids[posts_loaded];
-            appendPost(document.getElementById(destination), append, posts_ids[posts_loaded]);
-            if (destination == 'posts') {
-                let comments_ids = apiRequest(null, '/post/api/post/' + post_id, 'GET')['comments'];
-                if (comments_ids.length) {
-                    let comments_loaded = document.getElementById('comments-' + post_id).childElementCount
-                    for (; comments_loaded < comments_ids.length; comments_loaded++) {
-                        let comment_id = comments_ids[comments_loaded];
-                        appendPost(document.getElementById('comments-' + post_id), append, comment_id);
-                    }
+    var posts_loaded = document.getElementById(destination).childElementCount
+    var lim = Math.min(posts_loaded + count, Object.keys(posts_ids).length)
+    for (; posts_loaded < lim; posts_loaded++) {
+        let post_id = posts_ids[posts_loaded];
+        appendPost(document.getElementById(destination), append, posts_ids[posts_loaded]);
+        if (destination == 'posts') {
+            let comments_ids = apiRequest(null, '/post/api/post/' + post_id, 'GET')['comments'];
+            if (comments_ids != null) {
+                let comments_loaded = document.getElementById('comments-' + post_id).childElementCount
+                for (; comments_loaded < comments_ids.length; comments_loaded++) {
+                    let comment_id = comments_ids[comments_loaded];
+                    appendPost(document.getElementById('comments-' + post_id), append, comment_id);
                 }
             }
         }
@@ -247,11 +244,10 @@ function addListeners(post_id) {
 
 const prepend = 0;
 const append = 1;
+var posts_ids = apiRequest('posts_ids_list', 'post/data_api/', 'POST');
 
-$(document).ready(function () {
-    submitFormAjax(".post-create-form", null, postCreated);
-    loadPosts(5, 'posts');
-});
+submitFormAjax(".post-create-form", null, postCreated);
+loadPosts(5, 'posts');
 
 window.addEventListener('scroll', function (e) {
     let diff = document.getElementById('body').offsetHeight - (window.scrollY + window.innerHeight);
