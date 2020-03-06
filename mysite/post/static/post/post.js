@@ -1,22 +1,3 @@
-function loadTest() {
-    $.ajax({
-        url: 'post/post_template',
-        method: 'GET',
-        context: {},
-        success: function (response) {
-            $("#logo").html(response);
-            console.log('response', response)
-        }
-    })
-    var xhr = new XMLHttpRequest();
-
-    xhr.onload = function () {
-        logo.innerHTML = this.response;
-        console.log(this.response)
-    };
-    xhr.open('GET', '/', false);
-    xhr.send();
-}
 function markLiked(post_id) {
     var button = document.getElementById("like-button-" + post_id);
     var url = $(button).attr('is-liked')
@@ -54,8 +35,9 @@ function closeEdit(post_id) {
     var button = document.querySelector("#edit-button-" + post_id);
     document.querySelector("#edit-group-" + post_id).style.display = 'none';
     let content = document.querySelector("#content-div-" + post_id)
-
-    content.style.display = 'flex';
+    if ($(content).attr('comment') == 'yes')
+        content.style.display = 'inline-block';
+    else content.style.display = 'flex';
     $(button).text('Edit');
     setClicked(button, 'primary');
 }
@@ -160,9 +142,10 @@ function postUpdated(args, response) {
     $(document.getElementById("content2-" + post_id)).text(text);
     let content = $(document.getElementById("content-" + post_id))
     $(document.getElementById("content-" + post_id)).text(' ' + text);
-    if (content.attr('comment') == 'yes')
-        document.getElementById("content-" + post_id).prepend(authorHref);
+    if (content.attr('comment') == 'yes');
+    // document.getElementById("content-" + post_id).prepend(authorHref);
     closeEdit(post_id);
+    markHref(post_id);
 }
 function apiRequest(query, url, method, args = null) {
     var result = NaN;
@@ -177,8 +160,6 @@ function apiRequest(query, url, method, args = null) {
             // 'args': args,
         },
         success: function (response) {
-            console.log('query succesfull');
-            console.log('response', response['1']);
             result = response;
         },
         error: function (errorData) {
@@ -227,6 +208,7 @@ function appendPost(node, mode, post_id, is_comment = null) {
             }
             addListeners(post_id);
             markLiked(post_id);
+            markHref(post_id);
         },
         error: function (errorData) {
             console.log('error');
@@ -240,6 +222,20 @@ function addListeners(post_id) {
     submitFormAjax("#comment-form-" + post_id, null, postCreated);
     submitFormAjax("#like-form-" + post_id, null, postLiked);
     editOnClick(post_id);
+    $(document.getElementById("post-" + post_id)).click(function (e) {
+        if (!e.target.nodeName.indexOf(['DIV', 'IMG', 'P'])) return;
+        window.location.replace($(this).attr("href"))
+    })
+}
+function markHref(post_id) {
+    var content;
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    if ((content = document.getElementById("content2-" + post_id)) != null);
+    else if ((content = document.getElementById("content-" + post_id)) != null);
+    else console.log('Can not find post with id:', post_id)
+    content.innerHTML = content.innerHTML.replace(urlRegex, function (url) {
+        return '<a href="' + url + '">' + url + '</a>';
+    })
 }
 
 const prepend = 0;
@@ -256,3 +252,4 @@ window.addEventListener('scroll', function (e) {
     window.requestAnimationFrame(function () {
     });
 });
+

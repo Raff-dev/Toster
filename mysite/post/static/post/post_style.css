@@ -7,6 +7,7 @@
     background-color: rgb(232, 232, 241);
     border: lavender;
     border-radius: 3px;
+    cursor: pointer;
 }
 
 .post:hover{
@@ -126,8 +127,8 @@
 .content p, .content a  {
     word-break: break-all;
     margin-bottom: 0;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 .post .edit-group{
     display: none;
@@ -171,6 +172,6 @@
     border-radius: 20px;
     background-color: #fffa;
     width: fit-content;
-    display:flex; 
+    display: inline-block;
 }
 

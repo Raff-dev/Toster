@@ -2,37 +2,37 @@
 {% load crispy_forms_tags %}
 {% load humanize %}
 {% load js %}
-<div class="post mt-2" id="post-{{post.id}}" ">
+<div class="post mt-2" id="post-{{post.id}}" href="{% url 'post:post_detail' post.id %}">
     <div class=" nav nav-top align-items-center">
-    <div class="part-1 align-items-center">
-        <div class="profile-img">
-            <img class="ml-2" src="{{post.author.profile.profile_img.url}}" alt="{{post.author}}"></img>
-        </div>
+        <div class="part-1 align-items-center">
+            <div class="profile-img">
+                <img class="ml-2" src="{{post.author.profile.profile_img.url}}" alt="{{post.author}}"></img>
+            </div>
 
-        <div class="user-timestamp mt-2">
-            <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
-            <p class="timestamp ml-2">{{post.timestamp|naturaltime}}</p>
-        </div>
+            <div class="user-timestamp mt-2">
+                <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
+                <p class="timestamp ml-2">{{post.timestamp|naturaltime}}</p>
+            </div>
 
-        {% if user == post.author %}
-        <div class="edit">
-            <form class="-edit-form" method="POST" action="{ %url 'post:post_update' post.id %}" post_id={{post.id}}>
-            </form>
-            <button class="edit-button ml-2 btn btn-sm btn-outline-primary" type="submit" id="edit-button-{{post.id}}"
-                post_id={{post.id}}>Edit</button>
-        </div>
+            {% if user == post.author %}
+            <div class="edit">
+                <form class="-edit-form" method="POST" action="{ %url 'post:post_update' post.id %}"
+                    post_id={{post.id}}>
+                </form>
+                <button class="edit-button ml-2 btn btn-sm btn-outline-primary" type="submit"
+                    id="edit-button-{{post.id}}" post_id={{post.id}}>Edit</button>
+            </div>
 
-        <div class="delete">
-            <form class="delete-form" method="POST" post_id={{post.id}} id="delete-form-{{post.id}}"
-                action="{%url 'post:post_delete' post.id %}">
-                {% csrf_token %}
-                <button type="submit" class=" ml-2 btn btn-outline-danger btn-sm">Delete</button>
-            </form>
+            <div class="delete">
+                <form class="delete-form" method="POST" post_id={{post.id}} id="delete-form-{{post.id}}"
+                    action="{%url 'post:post_delete' post.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class=" ml-2 btn btn-outline-danger btn-sm">Delete</button>
+                </form>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-    </div>
-    <div class="part-2">
-        <a class="btn btn-outline-secondary" href="{% url 'post:post_detail' post.id %}"">Detail</a>
+        <div class="part-2">
         </div>
 
         <div class=" options">
@@ -82,57 +82,58 @@
                 {% endif %}
             </div>
 
+        </div>
     </div>
-</div>
 
-<div class="content">
-    <div class="content mx-2 py-1 " id="content-div-{{post.id}}">
-        {% if post.should_snippet %}
-        <p id="content1-{{post.id}}">{{post.snippet}}</p>
-        <p id="show-more">show more...</p>
-        {% else %}
-        <p id="content2-{{post.id}}">{{post.content}}</p>
-        {%endif%}
-    </div>
-    {% if post.author == user %}
+    <div class="content">
+        <div class="content mx-2 py-1 " id="content-div-{{post.id}}">
+            {% if post.should_snippet %}
+            <p id="content1-{{post.id}}">{{post.snippet}}</p>
+            <p id="show-more">show more...</p>
+            {% else %}
+            <p id="content2-{{post.id}}">{{post.content}}</p>
+            {%endif%}
+        </div>
+        {% if post.author == user %}
 
-    <div class="edit-group" id="edit-group-{{post.id}}">
-        <form class="form-group edit-form" method="POST" post_id="{{post.id}}"
-            action="{% url 'post:post_update' post.id %}" id="edit-form-{{post.id}}">
-            {% csrf_token %}
-            <input class="form-control " name="content" class="m-2" value="{{post.content}}" type="text"
-                maxlength=" 300" required id="input-{{post.id}}"">
+        <div class="edit-group" id="edit-group-{{post.id}}">
+            <form class="form-group edit-form" method="POST" post_id="{{post.id}}"
+                action="{% url 'post:post_update' post.id %}" id="edit-form-{{post.id}}">
+                {% csrf_token %}
+                <input class="form-control " name="content" class="m-2" value="{{post.content}}" type="text"
+                    maxlength=" 300" required id="input-{{post.id}}"">
             <input name=" id" value="{{post.id}}" class="d-none">
-            <div class="edit-form-button">
-                <button type="submit" class="save-button btn btn-primary" post_id={{post.id}}
-                    id="save-button-{{post.id}}">Save</button>
-            </div>
-        </form>
-    </div>
-    {%endif%}
+                <div class="edit-form-button">
+                    <button type="submit" class="save-button btn btn-primary" post_id={{post.id}}
+                        id="save-button-{{post.id}}">Save</button>
+                </div>
+            </form>
+        </div>
+        {%endif%}
 
-</div>
-
-<div class="nav nav-bottom row justify-content-around p-1">
-    <div class="like">
-        <form class="like-form" id="like-form-{{post.id}}" action="{% url 'post:post-like' post.id %}"
-            post_id="{{post.id}}" method="POST">
-            {% csrf_token %}
-            <button type="submit" id="like-button-{{post.id}}" likes-count="{{post.likes.count}}"
-                is-liked="{% url 'post:post-like' post.id %}" class="like-button ml-2 btn btn-outline-success btn-sm">
-                {{post.likes.count}} Like{{post.likes.count|pluralize}}
-            </button>
-        </form>
     </div>
 
-    <div class="comment-button">
-        <button class="btn btn-sm btn-outline-primary">{{post.comments.all.count}} Comments</button>
+    <div class="nav nav-bottom row justify-content-around p-1">
+        <div class="like">
+            <form class="like-form" id="like-form-{{post.id}}" action="{% url 'post:post-like' post.id %}"
+                post_id="{{post.id}}" method="POST">
+                {% csrf_token %}
+                <button type="submit" id="like-button-{{post.id}}" likes-count="{{post.likes.count}}"
+                    is-liked="{% url 'post:post-like' post.id %}"
+                    class="like-button ml-2 btn btn-outline-success btn-sm">
+                    {{post.likes.count}} Like{{post.likes.count|pluralize}}
+                </button>
+            </form>
+        </div>
+
+        <div class="comment-button">
+            <button class="btn btn-sm btn-outline-primary">{{post.comments.all.count}} Comments</button>
+        </div>
+        <div class="Share">
+            <button class="btn btn-sm btn-outline-primary">Share</button>
+        </div>
     </div>
-    <div class="Share">
-        <button class="btn btn-sm btn-outline-primary">Share</button>
-    </div>
-</div>
-<div class="comments" id="comments-{{post.id}}"">
+    <div class="comments" id="comments-{{post.id}}"">
         {%comment%}
         <!-- {% for comment in post.comments.all %}
             {% include "post/comment_template.html" with post=post comment=comment user=user%}
@@ -142,19 +143,19 @@
 
         {% if user.is_authenticated %}
     <div class=" user-comment row px-3 py-2">
-    <div class="profile-img">
-        <img class="" src="{{user.profile.profile_img.url}}" alt="{{post.author}}">
-    </div>
+        <div class="profile-img">
+            <img class="" src="{{user.profile.profile_img.url}}" alt="{{post.author}}">
+        </div>
 
-    <div class="comment-form-div col">
-        <form class="comment-form" id="comment-form-{{post.id}}" post_id="{{post.id}}" method="POST"
-            action="{% url 'post:post-list' %}">
-            {% csrf_token %}
-            <input type="text" name="content" placeholder="Write a comment..." class="form-control">
-            <input type="text" name="parent" value="{{post.id}}" class="d-none">
-            <button type="submit" class="d-none"></button>
-        </form>
+        <div class="comment-form-div col">
+            <form class="comment-form" id="comment-form-{{post.id}}" post_id="{{post.id}}" method="POST"
+                action="{% url 'post:post-list' %}">
+                {% csrf_token %}
+                <input type="text" name="content" placeholder="Write a comment..." class="form-control">
+                <input type="text" name="parent" value="{{post.id}}" class="d-none">
+                <button type="submit" class="d-none"></button>
+            </form>
+        </div>
     </div>
-</div>
 </div>
 {% endif %}
