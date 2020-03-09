@@ -36,8 +36,20 @@ function scrollLoad() {
     });
 }
 function markLiked(post_id) {
-    var button = document.getElementById("like-button-" + post_id);
-    var url = $(button).attr('is-liked')
+    let url = 'post/api/post/' + post_id + '/like/'
+    let method = 'get'
+    let isliked = apiRequest(url, method)
+    let el = $(document.getElementById("like-" + post_id))
+    toggleLikeIcon(el, isliked)
+}
+function toggleLikeIcon(el, isliked) {
+    if (isliked) {
+        el.children('.liked').css('opacity', '1')
+        el.siblings('p').css('color', 'red')
+    } else {
+        el.children('.liked').css('opacity', '0')
+        el.siblings('p').css('color', 'black')
+    }
 }
 function markHref(post_id) {
     var content;
@@ -92,16 +104,13 @@ function postLiked(post_id, isliked) {
     var el = $(document.getElementById("like-" + post_id))
     var likes_count = parseInt(el.attr('likes-count'));
     if (isliked) {
-        el.children('.liked').css('opacity', '1')
-        el.siblings('p').css('color', 'red')
         el.siblings('p').text(likes_count + 1)
         el.attr("likes-count", likes_count + 1);
     } else {
-        el.children('.liked').css('opacity', '0')
-        el.siblings('p').css('color', 'black')
         el.siblings('p').text(likes_count - 1)
         el.attr("likes-count", likes_count - 1);
     }
+    toggleLikeIcon(el, isliked)
 }
 function postDeleted(post_id) {
     var post = document.getElementById("post-" + post_id);
@@ -124,7 +133,7 @@ function postUpdated(post_id) {
 function apiRequest(url, method, data = {}) {
     var result = NaN;
     data['csrfmiddlewaretoken'] = csrf_token
-    console.log(url, data)
+    console.log(url)
     $.ajax({
         url: url,
         method: method,
@@ -209,7 +218,6 @@ function likePostListener(post_id) {
         let url = 'post/api/post/' + post_id + '/like/'
         let method = 'POST'
         let result = apiRequest(url, method)
-        console.log(result['liked'])
         postLiked(post_id, result['liked'])
     })
 }
