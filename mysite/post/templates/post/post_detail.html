@@ -1,31 +1,17 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% load humanize %}
+{% load js %}
 {% block link%}
 
-
+<link rel="stylesheet" href="{% static 'post/post_style.css'%}">
+<link rel="stylesheet" href="{% static 'post/home_style.css'%}">
 {% endblock%}
 
 {% block content %}
-<a class="overlay" href="{% url 'post:post_detail' post.id %}">
-    <div class="post mt-2">
-        <div class="post-nav mt-2">
-            <img class = "profile_pic ml-2" src="{{post.author.profile.profile_pic.url}}"></img>
-            <div class="mt-2">
-                <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
-                <h5 class="timestamp ml-2">{{post.timestamp|naturaltime}}</h5>
-            </div>
-            <button type="button" class="ml-2 btn btn-outline-success btn-sm">{{post.likes.count}} Likes</button>
-            <button type="button" class="ml-2 btn btn-outline-primary btn-sm">Edit</button>
-            <button type="button" class="ml-2 btn btn-outline-danger btn-sm">Delete</button>
-            <div class="chuj">
-                <div class="dot1"></div>
-                <div class="dot2"></div>
-                <div class="dot3"></div>
-            </div>
-            
-            
-        </div>
-    </div>
-</a>
+<div id="posts" class="posts">
+    {% include 'post/post_template.html' with post=post comments=comments user=user%}
+</div>
+
 {% endblock%}

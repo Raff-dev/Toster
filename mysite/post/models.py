@@ -12,11 +12,9 @@ class Post(models.Model):
         User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
     parent = models.ForeignKey(
-        'self', related_name='comment', on_delete=models.CASCADE, null=True, blank=True)
+        'self', related_name='comments', on_delete=models.CASCADE, null=True, blank=True)
     likes = models.ManyToManyField(
-        User, related_name='liked_post', blank=True)
-    comments = models.ManyToManyField(
-        'self', related_name='parent_post', blank=True)
+        User, related_name='liked_posts', blank=True)
 
     snippet_length = 350
 
@@ -42,3 +40,9 @@ class Post(models.Model):
 
     def is_comment_reply(self):
         return self.parent.parent is not None
+
+
+class PostImage(models.Model):
+    post = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='post_images')

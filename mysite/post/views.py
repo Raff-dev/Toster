@@ -12,6 +12,15 @@ class PostDetailView(DetailView):
     model = Post
     template_name = 'post/post_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(PostDetailView, self).get_context_data(**kwargs)
+
+        post = self.object
+        comments = Post.objects.filter(parent=kwargs.get('pk'))
+
+        context['comments'] = comments
+        return context
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post

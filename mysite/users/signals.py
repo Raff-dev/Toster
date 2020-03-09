@@ -10,6 +10,7 @@ from .models import Profile
 def ensure_alias(sender, instance, **kwargs):
     if not instance.alias:
         instance.alias = instance.user.username
+        instance.save()
 
 
 @receiver(post_save, sender=User)

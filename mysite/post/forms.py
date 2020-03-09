@@ -8,7 +8,8 @@ class PostForm(forms.ModelForm):
         'placeholder': 'What are you thinking about?',
     }
     ))
+    img = forms.ImageField()
 
     class Meta:
         model = Post
-        fields = ['content', ]
+        fields = ['content', 'img']

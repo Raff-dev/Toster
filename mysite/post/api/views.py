@@ -18,8 +18,12 @@ class PostLikeAPIToggle(APIView):
     def get(self, request, format=None, *args, **kwargs,):
         user = self.request.user
         post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
-
-        if user in post.likes.all():
+        # post.liked_post_set.add(user)
+        print('likes', post.likes_set)
+        print('comments', post.comments)
+        print('liked_post', user.liked_post)
+        print('parent', post.parent)
+        if user in post.likes_set.all():
             post.likes.remove(user)
             liked = False
             print('removed user from likes')
@@ -91,13 +95,11 @@ class PostDataApi(APIView):
     }
 
 
-class PostViewSet(viewsets.ModelViewSet):
-
-    # list, create, retrieve, update, partial_update, destroy
-
+class PostViewSet(viewsets.GenericViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    # permission_classes = {permissions.IsAuthenticated}
+    #permission_classes = {permissions.IsAuthenticated}
+    #authentication_classes = (authentication.TokenAuthentication,)
 
     def get_permissions(self):
         """
@@ -113,16 +115,13 @@ class PostViewSet(viewsets.ModelViewSet):
         data = request.data.copy()
         data['timestamp'] = timezone.now()
         data['author'] = self.request.user.id
-
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        serializer.save()
         if serializer.data['parent']:
             parent_id = serializer.data['parent']
             parent = Post.objects.get(pk=parent_id)
             new_post = Post.objects.get(pk=serializer.data['id'])
-            print('parent:', parent)
-            print('new_post:', new_post)
             new_post.parent = parent
             new_post.save()
             parent.comments.add(new_post)
@@ -134,16 +133,39 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         method used to toggle like attribute and check if a given post is liked
         """
-        user = self.request.user
         post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
+        user = self.request.user
         if request.method == 'POST':
             if user in post.likes.all():
                 post.likes.remove(user)
                 liked = False
-                print('removed user from likes')
             else:
                 post.likes.add(user)
                 liked = True
-                print('added user to likes')
             return Response({'liked': liked, 'id': post.id})
         return Response(user in post.likes.all())
+
+    @action(methods=['get'], detail=True)
+    def comments_ids(self, request, format=None, *args, **kwargs):
+        """
+        return a list of comments ids
+        """
+        comments = Post.objects.filter(parent=kwargs.get('pk'))
+        return Response([comment.id for comment in comments])
+
+    @action(methods=['get'], detail=False)
+    def posts_ids(self, request, format=None, *args, **kwargs):
+        """
+        return a list of psots ids
+        """
+        if 'filter' in request.POST.keys():
+            filter_ = request.POST['filter']
+            return Response([post.id for post in Post.objects.all().filter(
+                filter_).order_by('-timestamp')])
+        return Response([post.id for post in Post.objects.all().order_by('-timestamp')])
+
+    @action(methods=['post'], detail=True)
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response(True)

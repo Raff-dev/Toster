@@ -17,10 +17,10 @@ class UserRegisterForm(UserCreationForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    alias = forms.CharField(required=False, max_length=16,)
+    alias = forms.CharField(required=False, max_length=50,)
     profile_img = forms.ImageField(required=False)
-    name = forms.CharField(required=False, max_length=36,)
-    description = forms.CharField(required=False, max_length=36, )
+    name = forms.CharField(required=False, max_length=60,)
+    description = forms.CharField(required=False, max_length=360, )
 
     class Meta:
         model = Profile

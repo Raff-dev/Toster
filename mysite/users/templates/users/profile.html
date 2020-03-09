@@ -4,8 +4,10 @@
 {% load humanize %}
 {% block link %}
 <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'users/profile_style.css'%}">
+<link rel="stylesheet" href="{% static 'main/base_style.css'%}">
 <link rel="stylesheet" href="{% static 'main/home_style.css'%}">
+<link rel="stylesheet" href="{% static 'post/post_style.css'%}">
+<link rel="stylesheet" href="{% static 'users/profile_style.css'%}">
 {% endblock %}
 
 
@@ -22,7 +24,7 @@
     </div>
 </div>
 
-<div class="profile col-8 ">
+<div class="profile">
     <div class="profile-info">
         <div class="profile-background-img"></div>
         <div class="main-profile-info">
@@ -41,64 +43,26 @@
             <p>profile id:{{profile.id}}</p>
             <p>{{profile.description}}</p>
             <p>{{profile.user.email}}</p>
-            <p>Following: {{profile.following.set_all.count}}</p>
-            <p>Followers: {{profile.followers.set_all.count}}</p>
+            <p>Following: {{profile.following.count}}</p>
+            <p>Followers: {{profile.followers_set.all.count}}</p>
         </div>
     </div>
 
     <div>
         <div class="posts text-white pt-2 mt-3"></div>
         {% for post in posts %}
-        <a class="overlay" href="{% url 'post:post_detail' post.id %}">
-            <div class="post mt-2" id="post-{{post.id}}">
-                <div class="post-nav mt-2">
-                    <img class="profile-img ml-2" src="{{post.author.profile.profile_img.url}}"></img>
-                    <div class="mt-2">
-                        <a href="{%url 'users:profile' post.author.profile.id %}" class="ml-2">{{post.author}}</a>
-                        <p class="timestamp ml-2">{{post.timestamp|naturaltime}}</p>
-                    </div>
-                    {% csrf_token %}
-                    <button type="button" id="{{post.id}}" liked-href="{{post.get_posts_liked_url}}"
-                        data-href="{{post.get_like_api_url}}" data-likes="{{post.likes.count}}"
-                        class="like-button-ajax ml-2 btn btn-outline-success btn-sm">
-                        {{post.likes.count}} Like{{post.likes.count|pluralize}}
-                    </button>
-                    {% if user == post.author %}
-                    <button type="button" class="ml-2 btn btn-outline-primary btn-sm">Edit</button>
-                    <form method="POST" class="delete-button-ajax" id="{{post.id}}"
-                        action="{%url 'post:post_delete' post.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class=" ml-2 btn btn-outline-danger btn-sm">Delete</button>
-                    </form>
-                    {% endif %}
-                    <div class="bg-white">
-                        <div class="dot1"></div>
-                        <div class="dot2"></div>
-                        <div class="dot3"></div>
-                    </div>
-                </div>
-                <div class="ml-4 mt-2">
-                    {% if not post.should_snippet %}
-                    <p id="post-content">{{post.snippet}}</p>
-                    <p id="show-more">show more...</p>
-                    {% else %}
-                    <p id="post-content">{{post.content}}</p>
-                    {%endif%}
-
-                    <script>
-                        document.getElementById("show-more").onclick = function () {
-                            document.getElementById("show-more").innerHTML = "";
-                            document.getElementById("post-content").innerHTML = "{{post.content}}";
-                        };
-                    </script>
-                </div>
-            </div>
-        </a>
-        {% endfor %}
+        {% include 'post/post_template.html' with post=post user=user%}
     </div>
 </div>
+</a>
+{% endfor %}
+</div>
+</div>
 </div>
 </div>
 
-<script src="{% static 'users/update_profile.js' %}"></script>
+<script src="{% static 'users/profile_update.js' %}"></script>
+{% endblock %}
+{% block script%}
+
 {% endblock %}

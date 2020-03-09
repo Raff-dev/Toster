@@ -12,17 +12,15 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     join_timestamp = models.DateField()
-    alias = models.CharField(max_length=16, blank=True,
+    alias = models.CharField(max_length=50, blank=True,
                              validators=[alphanumeric])
-    name = models.CharField(max_length=36, blank=True,
+    name = models.CharField(max_length=60, blank=True,
                             null=True, validators=[letters])
     profile_img = models.ImageField(
         default='default_profile_pic.jpg', upload_to='profile_pics')
     description = models.TextField(blank=True, max_length=300)
-    following = models.ForeignKey(
-        User, null=True, blank=True, on_delete=models.SET_NULL, related_name='following')
-    followers = models.ForeignKey(
-        User, null=True, blank=True, on_delete=models.SET_NULL, related_name='followers')
+    following = models.ManyToManyField(
+        User, related_name='followers', blank=True)
 
     def __str__(self):
         return f'Profile [User:{self.user.username},ID:{self.user.id}]'
