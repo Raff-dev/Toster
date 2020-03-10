@@ -14,9 +14,53 @@ function toggleDropdown(post_id) {
         document.addEventListener('click', outsideClickListener);
     }
 }
+function togglePublishButton(button_id, input_id) {
+    var button = document.getElementById(button_id)
+    var input = document.getElementById(input_id)
+    button.disabled = true;
+    input.onblur = fun
+    input.onfocus = fun
+    input.onkeyup = fun
+    function fun() {
+        if (input.value === "")
+            button.disabled = true;
+        else button.disabled = false;
+    }
+}
+function addImage(input_id, iscomment = false) {
+    $(input_id).on("change", function () {
+        var that = this
+        if (this.files && this.files[0]) {
+            $(this.files).each((index, file) => {
+                if (iscomment) create_files = comment_create_files
+                else create_files = post_create_files
+                create_files.push(file)
+                var reader = new FileReader();
+                reader.onload = event => {
+                    var div = $(document.createElement('div'))
+                    var close = $(document.createElement('div'))
+                    var picture = "<img src='" + event.target.result + "' class='input-image'>"
+                    div.addClass('create-image')
+                    close.addClass('delete-image')
+                    close.append("<div class='x1'></div><div class='x2'></div>")
+                    div.append(picture, close)
+                    if (iscomment) $("#modal-create-images").append(div);
+                    else $("#create-images").append(div);
+                    close.click(function () {
+                        $(create_files).each((i, f) => {
+                            if (f == file) create_files.splice(i, 1)
+                        })
+                        close.parent().remove()
+                    })
+                }
+                reader.readAsDataURL(this.files[index]);
+            })
+        }
+
+    });
+}
 function postDetailRedirect(post_id) {
     $(document.getElementById("post-" + post_id)).click(function (e) {
-        let condition1 = ['NAV', 'P'].includes(e.target.nodeName)
         let c1 = $(e.target).parents('.like-div').length
         let c2 = $(e.target).parents('.share').length
         let c3 = $(e.target).parents('.comment').length
@@ -27,19 +71,19 @@ function postDetailRedirect(post_id) {
         }
     })
 }
-function scrollLoad() {
+function scrollLoad(count, destination) {
     window.addEventListener('scroll', function (e) {
         let diff = document.getElementById('body').offsetHeight - (window.scrollY + window.innerHeight);
-        if (diff < document.getElementById('footer').offsetHeight) loadPosts(3, 'posts');
+        if (diff < document.getElementById('footer').offsetHeight) loadPosts(id_list, count, destination);
         window.requestAnimationFrame(function () {
         });
     });
 }
 function markLiked(post_id) {
-    let url = 'post/api/post/' + post_id + '/like/'
+    let el = $(document.getElementById("like-" + post_id))
+    let url = $(el).attr('url')
     let method = 'get'
     let isliked = apiRequest(url, method)
-    let el = $(document.getElementById("like-" + post_id))
     toggleLikeIcon(el, isliked)
 }
 function toggleLikeIcon(el, isliked) {
@@ -66,13 +110,9 @@ function setLikeText(obj, newVal) {
     else $(obj).text(newVal + " Likes");
 }
 function confirmDelete() {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-        console.log('Deletion confirmed');
+    if (window.confirm("Are you sure you want to delete this post?"))
         return true;
-    } else {
-        console.log('Deletion denied');
-        return false;
-    }
+    else return false;
 }
 function closeEdit(post_id) {
     var button = document.querySelector("#edit-button-" + post_id);
@@ -86,7 +126,6 @@ function closeEdit(post_id) {
 }
 function editOnClick(post_id) {
     $("#edit-button-" + post_id).on("click", function (event) {
-        console.log('post_idd:', post_id);
         if (this.innerText == 'Edit') {
             document.querySelector("#edit-group-" + post_id).style.display = 'flex';
             document.querySelector("#content-div-" + post_id).style.display = 'none';
@@ -95,10 +134,43 @@ function editOnClick(post_id) {
         } else closeEdit(post_id);
     });
 }
+function loadPosts(id_list, count, destination_id) {
+    var destination = document.getElementById(destination_id)
+    var posts_loaded = destination.childElementCount
+    var lim = Math.min(posts_loaded + count, Object.keys(id_list).length)
+    for (; posts_loaded < lim; posts_loaded++) {
+        appendPost((destination), append, id_list[posts_loaded]);
+    }
+}
+function appendPost(node, mode, post_id) {
+    let url = '/post/post_template/' + post_id
+    let post = document.createElement('div')
+    let response = apiRequest(url, 'GET')
+    if (response != false) {
+        post.innerHTML = response
+        if (mode == append) node.append(post);
+        else node.prepend(post);
+        addListeners(post_id);
+        markLiked(post_id);
+        markHref(post_id);
+    }
+}
 //-----------------------
-function postCreated(post_id) {
-    document.getElementById('create-input').value = ''
-    appendPost(document.getElementById('posts'), prepend, post_id);
+function postCreated(result, iscomment) {
+    if (iscomment) {
+        let parent_id = result['parent']
+        comment_create_files = []
+        url = $('#post-' + parent_id).attr('href')
+        window.location = url
+    }
+    else {
+        let post_id = result['id']
+        document.getElementById('create-input').value = ''
+        appendPost(document.getElementById('posts'), prepend, post_id);
+        $('.create-images').empty()
+        $('#create')[0].disabled = true
+        post_create_files = []
+    }
 }
 function postLiked(post_id, isliked) {
     var el = $(document.getElementById("like-" + post_id))
@@ -130,115 +202,75 @@ function postUpdated(post_id) {
     markHref(post_id);
 }
 //-----------------------
-function apiRequest(url, method, data = {}) {
+function apiRequest(url, method, data = null) {
+    console.log('url', url, 'data', data)
     var result = NaN;
-    data['csrfmiddlewaretoken'] = csrf_token
-    console.log(url)
+    let contentType = false
+    let processData = false
+    if (data == null) {
+        data = { "csrfmiddlewaretoken": csrf_token }
+        contentType = 'application/x-www-form-urlencoded; charset=UTF-8'
+        processData = true
+    }
     $.ajax({
         url: url,
         method: method,
         async: false,
         data: data,
+        cache: false,
+        processData: processData,
+        contentType: contentType,
         success: function (response) {
             result = response;
         },
         error: function (errorData) {
             console.log('query error');
             console.log('errorData:', errorData);
+            result = false
         }
     })
     return result;
 }
-function loadPosts(count, destination) {
-    var posts_loaded = document.getElementById(destination).childElementCount
-    var lim = Math.min(posts_loaded + count, Object.keys(posts_ids).length)
-    for (; posts_loaded < lim; posts_loaded++) {
-        appendPost(document.getElementById(destination), append, posts_ids[posts_loaded]);
-        // if (destination == 'posts') {
-        //     let post_id = posts_ids[posts_loaded];
-        //     let comments_ids = apiRequest(null, '/post/api/post/' + post_id + '/comments/', 'GET');
-        //     if (comments_ids != null) {
-        //         let comments_loaded = document.getElementById('comments-' + post_id).childElementCount
-        //         for (; comments_loaded < comments_ids.length; comments_loaded++) {
-        //             let comment_id = comments_ids[comments_loaded];
-        //             appendPost(document.getElementById('comments-' + post_id), append, comment_id);
-        //         }
-        //     }
-        // }
-    }
-}
-function appendPost(node, mode, post_id, is_comment = null) {
-    let url = 'post/post_template/' + post_id
-    $.ajax({
-        url: url,
-        method: 'GET',
-        async: false,
-        data: {},
-        success: function (response) {
-            let post = document.createElement('div')
-            post.innerHTML = response
-            switch (mode) {
-                case (append):
-                    node.append(post);
-                    break;
-                case (prepend):
-                    node.prepend(post);
-                    break;
-                default: ;
-            }
-            addListeners(post_id);
-            markLiked(post_id);
-            markHref(post_id);
-        },
-        error: function (errorData) {
-            console.log('error');
-            console.log(errorData);
-        }
-    })
-}
 function addListeners(post_id) {
     likePostListener(post_id);
     deletePostListener(post_id);
+    commentPostListener(post_id)
     postDetailRedirect(post_id);
     editlListener(post_id);
     editOnClick(post_id);
     toggleDropdown(post_id);
 }
-
-var posts_ids = apiRequest('post/api/post/posts_ids', 'GET');
-const prepend = 0;
-const append = 1;
-loadPosts(8, 'posts');
-createPostListener();
-scrollLoad()
-
-
 function likePostListener(post_id) {
     $('#like-' + post_id).on('click', function () {
-        let url = 'post/api/post/' + post_id + '/like/'
+        let url = $(this).attr('url')
         let method = 'POST'
-        let result = apiRequest(url, method)
+        let result = apiRequest(url, method, null)
         postLiked(post_id, result['liked'])
     })
 }
-function createPostListener() {
-    $('.create').on('click', function () {
-        let url = 'post/api/post/'
+function createPostListener(button, form_id, iscomment = false) {
+    button.on('click', function () {
+        var form = document.getElementById(form_id)
+        let url = $(this).attr('url')
         let method = 'post'
-        let content = document.getElementById('create-input').value
-        let parent = $(this).attr('parent')
-        let author = $(this).attr('author')
-        let data = { 'content': content, 'parent': parent, 'author': author }
-        let result = apiRequest(url, method, data)
-        postCreated(result['id'])
+        var files
+        if (iscomment) files = comment_create_files
+        else files = post_create_files
+        var formData = new FormData(form)
+        $(files).each((index) => {
+            formData.append('img' + index, files[index])
+        })
+        formData.append('csrfmiddlewaretoken', csrf_token)
+        let result = apiRequest(url, method, formData)
+        postCreated(result, iscomment)
     })
 }
 function deletePostListener(post_id) {
     $('#delete-' + post_id).on('click', function () {
         if (confirmDelete(post_id)) {
-            let url = 'post/api/post/' + post_id + '/delete/'
+            let url = $(this).attr('url')
             let method = 'post'
-            if (apiRequest(url, method, {})) postDeleted(post_id)
+            if (apiRequest(url, method)) postDeleted(post_id)
         }
     })
 }
@@ -251,5 +283,26 @@ function editlListener(post_id) {
         if (apiRequest(url, method, data)) postUpdated(post_id)
     })
 }
+function commentPostListener(post_id) {
+    $("#comment-" + post_id).on("click", function () {
+        let destination = document.getElementById('comment-modal')
+        let url = $(this).attr('url')
+        let method = 'GET'
+        let modal = apiRequest(url, method)
+        $(destination).empty()
+        destination.innerHTML = modal
+        createPostListener($("#modal-create"), "modal-create-form", true)
+        togglePublishButton('modal-create', "modal-create-input")
+        addImage('#modal-img-input', true)
+
+        $("#close-comment-modal").on('click', function () {
+            $(destination).empty()
+        })
+    })
+}
+
+const prepend = 0;
+const append = 1;
+
 
 

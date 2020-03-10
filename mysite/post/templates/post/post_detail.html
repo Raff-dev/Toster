@@ -5,13 +5,34 @@
 {% load js %}
 {% block link%}
 
-<link rel="stylesheet" href="{% static 'post/post_style.css'%}">
-<link rel="stylesheet" href="{% static 'post/home_style.css'%}">
+
 {% endblock%}
 
 {% block content %}
-<div id="posts" class="posts">
-    {% include 'post/post_template.html' with post=post comments=comments user=user%}
+
+<div class="post-detail">
+    {% include 'post/post_template.html' with post=post comments=comments user=user %}
 </div>
+<div id="comments" post_id={{post.id}} class="posts" url="{% url 'post:post-comments-ids' post.id%}">
+
+
+</div>
+
+{% endblock%}
+{% block script%}
+<script>
+    function postDeleted(post_id) {
+        window.location.href = '/home'
+    }
+    var post_id = $('#comments').attr('post_id')
+    var id_list = apiRequest($('#comments').attr('url'), 'GET');
+    console.log(id_list)
+    loadPosts(id_list, 8, 'comments');
+    likePostListener(post_id);
+    deletePostListener(post_id);
+    commentPostListener(post_id)
+    toggleDropdown(post_id);
+
+</script>
 
 {% endblock%}

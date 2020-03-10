@@ -1,40 +1,90 @@
-.modal{
+.modal-bg{
+    position: fixed;
     width: 100%;
     height:  100%;
     background-color: rgba(0,0,0, 0.7);
-    position: absolute;
-    display: none;
+    display: flex;
     justify-content: center;
     align-items: center;
     top: 0;
-
+    left: 0;
+    z-index: 999;
 }
 .modal-content{
-    position: relative;
-    background-color: white;
-    width: 50%;
-    height: 30%;
-    border-radius: 4px;
-    padding: 20px;
-    text-align: center;
+    position: absolute;
+    top: 8%;
 
+    background-color: white;
+    width: 600px;
+    height: fit-content;
+    border-radius: 15px;
+    display: block;
+}
+.modal-bg .close-div{
+    position: relative;
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px;
+    border-bottom: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0,0,0, 0.2);
+}
+.modal-bg .close-button {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+}
+.modal-bg .x1,.modal-bg .x2{
+    background-color: rgb(54, 154, 230);
+    height: 10%;
+    top: 50%;
+    left: 50%;
+}
+.modal-bg .x1{
+    transform:  translateX(-50%) rotate(45deg);
+}
+.modal-bg .x2{
+    transform:  translateX(-50%)rotate(-45deg);
+}
+
+.modal-content .post-text {
+    width: 100%;
+    justify-content: left;
 }
 
 .profile-update-modal-content{
     height: auto;
     margin: 20px;
 }
-.modal-close{
-    cursor: pointer;
-    position: absolute;
-    right: 15px;
-    top: 0px;
-    font-size: 50px;
-    transform: rotate(45deg);
+.modal-content .reply-info{
+    display: flex;
+    padding: 5px;
 }
-.modal-content input{
-    width: 50%;
-    display: block;
-    margin: 15px auto;
+.modal-content .reply-info .left{
+    display: flex;
+    height: 50px;
+    width: 50px;
+    margin-top:0px;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content .reply-info .line{
+    width: 2px;
+    height: 100%;
+    background-color: rgba(0,0,0, 0.15);
+}
+.modal-content .reply-info .right{
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.modal-content .reply-info p{
+    margin-right:2px
+}
 
-}
+

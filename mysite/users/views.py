@@ -3,26 +3,13 @@ from django.views.generic import (
     DetailView, CreateView, ListView, FormView, DeleteView, UpdateView)
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse
 
-from .forms import UserRegisterForm, ProfileUpdateForm
-from django.contrib.auth.models import User
+from .forms import ProfileUpdateForm
 from .models import Profile
 from post.models import Post
-
-
-def register(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('main:main')
-    else:
-        form = UserRegisterForm()
-    return render(request, 'users/register.html', {'form': form})
 
 
 class ProfileView(DetailView):

@@ -14,7 +14,7 @@
     border-bottom-width: 1px;
     border-color: rgba(111, 111, 111,0.18);
 }
-.post:hover{
+.posts .post:hover{
     cursor: pointer;
     background-color: hsla(222, 100%, 50%, 0.039)
 }
@@ -136,6 +136,25 @@
 .content p, .content a  {
     word-break: break-all;
     margin-bottom: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.content .post-image,.right .create-image{
+    background-color: white;
+    border:solid;
+    border-width:1px;
+    border-color: rgba(0,0, 0, .1);
+    border-radius: 2%;
+    height: 300px;
+    width: 100%;
+    margin-top: 5px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+.content .post-images img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
 .nav-bot{
     display: flex;

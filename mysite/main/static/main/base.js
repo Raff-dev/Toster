@@ -14,7 +14,7 @@ $('.nav-left a').hover(function () {
     var div = $(this).find('div')
     var img = $(this).find('img').get(1)
     $(this).css('background-color', 'white');
-    $(this).find(' p').css('color', 'black');
+    $(this).find('p').css('color', 'black');
     div.css({ 'background-color': 'white' });
 
     if (Array.from(div.get(0).classList).includes('profile')) {
@@ -23,6 +23,11 @@ $('.nav-left a').hover(function () {
     else $(img).css('opacity', '0')
 
 });
+
+function huj() {
+    console.log('chuj')
+}
+
 
 
 

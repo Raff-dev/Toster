@@ -1,0 +1,101 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+<div class="modal-bg">
+    <div class="modal-content">
+        <div class="close-div hover-set">
+            <div class="close-button hover" id="close-comment-modal">
+                <div class="x1"></div>
+                <div class="x2"></div>
+            </div>
+        </div>
+
+        <div class="post">
+            <div class="left">
+                <a href="{%url 'users:profile' post.author.profile.id %}">
+                    <img src="{{post.author.profile.profile_img.url}}" alt="{{post.author.username}}">
+                </a>
+            </div>
+            <div class="right">
+                <nav class="nav-top">
+                    <div class="info">
+                        <a class="alias"
+                            href="{%url 'users:profile' post.author.profile.id %}">{{post.author.profile.alias}}</a>
+                        <p class="username">@{{post.author}}</p>
+                        <p class="timestamp-dot">•</p>
+                        <p class="timestamp">{{post.timestamp|naturaltime}}</p>
+                    </div>
+                </nav>
+
+                <div class="content">
+                    <div class="post-text">
+                        <p>{{post.content}}</p>
+                    </div>
+
+                    <div class="post-images">
+                        {% for img in post.images.all %}
+                        <div class="post-image">
+                            <img src="{{ img.image.url }}" alt="post_image">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="reply-info">
+            <div class="left">
+                <div class="line"></div>
+            </div>
+            <div class="right">
+                <p>Replying to</p>
+                <a href="{%url 'users:profile' post.author.profile.id %}">@{{post.author}}</a>
+            </div>
+        </div>
+
+        <div class="create-div">
+            <div class="left">
+                <a href="{%url 'users:profile' user.profile.id %}"><img src="{{user.profile.profile_img.url}}"
+                        alt="{{user.username}}"></a>
+            </div>
+
+            <div class="right">
+                <div class="create-group">
+                    <form action="" id="modal-create-form" enctype="multipart/form-data"></form>
+                    <input id="modal-create-input" form="modal-create-form" class="create-input" type="text"
+                        name="content">
+                    <input class="d-none" form="modal-create-form" type="text" name="parent" value="{{post.id}}">
+                    <label for="content">
+                        <span>Your reply goes here</span>
+                    </label>
+                </div>
+
+                <div class="create-images" id="modal-create-images">
+                </div>
+
+                <div class="bar">
+                    <div class="inputs icon-set">
+                        <div class="hover add-image">
+                            <label for="modal-img-input">
+                                <img src=" {% static 'main/images/image_input.png' %}" alt="image_input">
+                            </label>
+                            <input class="input-files" id="modal-img-input" type="file" name="img" accept="image/*"
+                                required="" multiple>
+                        </div>
+                        <div class="hover">
+                            <img src="{% static 'main/images/twitter_colored.png' %}" alt="twitter">
+                        </div>
+                        <div class="hover">
+                            <img src="{% static 'main/images/twitter_colored.png' %}" alt="twitter">
+                        </div>
+                    </div>
+
+                    <div class="create-button-div">
+                        <button class="create" id="modal-create" url="{% url 'post:post-list' %}" post_id={{post.id}}
+                            parent="" author="{{user.id}}">Publish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

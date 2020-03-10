@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from .serializers import PostSerializer
-from ..models import Post
+from ..models import Post, PostImage
 
 
 class PostLikeAPIToggle(APIView):
@@ -49,52 +49,6 @@ class PostsLiked(APIView):
         return Response(data)
 
 
-class PostDataApi(APIView):
-    """
-    This class is redundant and its functionality should be
-    placed within PostViewSet class.
-    """
-
-    authentication_classes = (authentication.TokenAuthentication,)
-
-    def post(self, request, format=None, *args, **kwargs):
-        print(request.POST)
-        query = request.POST['query']
-        query_kwargs = request.POST['args']
-
-        response = self.query_dict[query](query_kwargs)
-        return Response(response)
-
-    def get_post_list(self, **kwargs):
-        posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
-        return serializer
-
-    def get_posts_ids_list(self, **kwargs):
-        posts_ids = {}
-        posts = Post.objects.all().filter(
-            parent=None).order_by('-timestamp')
-        count = posts.count()
-        print('thats a count: ', count)
-        for post, i in zip(posts, range(count)):
-            posts_ids[i] = post.id
-        # [post.id for post in Post.objects.all().filter(
-        # parent = None).order_by('-timestamp')]
-        print('posts ids:', posts_ids)
-        return posts_ids
-
-    def get_comment_list(self, **kwargs):
-        posts_ids = [post.id for post in Post.objects.all().filter(
-            parent=kwargs['parent_id']).order_by('-timestamp')]
-        print('comments ids:', posts_ids)
-        return posts_ids
-
-    query_dict = {
-        'posts_ids_list': get_posts_ids_list,
-        'comment_list': get_comment_list,
-    }
-
-
 class PostViewSet(viewsets.GenericViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -112,16 +66,25 @@ class PostViewSet(viewsets.GenericViewSet):
         return [permission() for permission in permission_classes]
 
     def create(self, request, *args, **kwargs):
+        print('POST::', request.POST)
+        print('FILES::', request.FILES)
+
         data = request.data.copy()
         data['timestamp'] = timezone.now()
         data['author'] = self.request.user.id
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        new_post = Post.objects.get(pk=serializer.data['id'])
+        for img in request.FILES.values():
+            img = PostImage(post=new_post, image=img)
+            img.save()
+
+            print(new_post.images.all())
         if serializer.data['parent']:
             parent_id = serializer.data['parent']
             parent = Post.objects.get(pk=parent_id)
-            new_post = Post.objects.get(pk=serializer.data['id'])
             new_post.parent = parent
             new_post.save()
             parent.comments.add(new_post)
@@ -150,19 +113,18 @@ class PostViewSet(viewsets.GenericViewSet):
         """
         return a list of comments ids
         """
-        comments = Post.objects.filter(parent=kwargs.get('pk'))
+        comments = Post.objects.all().filter(parent=kwargs.get('pk'))
         return Response([comment.id for comment in comments])
 
     @action(methods=['get'], detail=False)
     def posts_ids(self, request, format=None, *args, **kwargs):
         """
-        return a list of psots ids
+        return a list of posts ids with no parent
         """
-        if 'filter' in request.POST.keys():
-            filter_ = request.POST['filter']
-            return Response([post.id for post in Post.objects.all().filter(
-                filter_).order_by('-timestamp')])
-        return Response([post.id for post in Post.objects.all().order_by('-timestamp')])
+        posts = Post.objects.all().filter(parent=None).order_by('-timestamp')
+        ids = [post.id for post in posts]
+        print(ids)
+        return Response(ids)
 
     @action(methods=['post'], detail=True)
     def delete(self, request, *args, **kwargs):

@@ -26,13 +26,15 @@
 
                 <div class="dropdown hover" id="dropdown-{{post.id}}">
                     {% if user == post.author %}
-                    <div class="delete option" id='delete-{{post.id}}' post_id={{post.id}} method="POST">
+                    <div class="delete option" id='delete-{{post.id}}' url="{% url 'post:post-delete' post.id %}"
+                        post_id={{post.id}}>
                         <div>
                             <img src="{% static 'main/images/delete.png' %}" alt="delete">
                             <p>Delete</p>
                         </div>
                     </div>
-                    <div class="option edit" id="edit-{{post.id}}" post_id={{post.id}} method="POST">
+                    <div class="option edit" id="edit-{{post.id}}" url="{% url 'post:post-list' post.id %}"
+                        post_id={{post.id}} method="POST">
                         <div>
                             <img src="{% static 'main/images/edit.png' %}" alt="edit" form="edit-form-{{post.id}}">
                             <p>Edit</p>
@@ -90,13 +92,15 @@
         </nav>
 
         <div class="content">
-            <div class="content mx-2 py-1 " id="content-div-{{post.id}}">
-                {% if post.should_snippet %}
-                <p id="content1-{{post.id}}">{{post.snippet}}</p>
-                <p id="show-more">show more...</p>
-                {% else %}
-                <p id="content2-{{post.id}}">{{post.content}}</p>
-                {%endif%}
+            <div class="content" id="content-div-{{post.id}}">
+                <p id="content-{{post.id}}">{{post.content}}</p>
+            </div>
+            <div class="post-images">
+                {% for img in post.images.all %}
+                <div class="post-image">
+                    <img src="{{ img.image.url }}" alt="post_image">
+                </div>
+                {% endfor %}
             </div>
             {% if post.author == user %}
 
@@ -121,7 +125,7 @@
 
         <nav class="nav-bot icon-set hover-set">
             <div class="like-div">
-                <div class="like hover" id='like-{{post.id}}' method="POST" action="{%url 'post:post-like' post.id %}"
+                <div class="like hover" id='like-{{post.id}}' method="POST" url="{%url 'post:post-like' post.id %}"
                     likes-count="{{post.likes.count}}" post_id={{post.id}} liked='false'>
                     <img src=" {% static 'main/images/like.png' %}" alt="like">
                     <img class="colored" src="{% static 'main/images/like_colored.png' %}" alt="like_colored">
@@ -130,7 +134,7 @@
                 <p>{{post.likes.count}}</p>
             </div>
 
-            <div class="comment">
+            <div class="comment" id="comment-{{post.id}}"" url=" {% url 'post:comment_modal_template' post.id %}">
                 <div class="hover" id='comment-{{post.id}}' post_id={{post.id}}>
                     <img src="{% static 'main/images/comment.png' %}" alt="comment">
                     <img class="colored" src="{% static 'main/images/comment_colored.png' %}" alt="comment_colored">
@@ -147,26 +151,3 @@
             </div>
     </div>
 </div>
-</div>
-
-
-<div class="comments" id="comments-{{post.id}}""></div>
-
-        {% if user.is_authenticated %}
-    <div class=" d-none user-comment row px-3 py-2">
-    <div class="profile-img">
-        <img class="" src="{{user.profile.profile_img.url}}" alt="{{post.author}}">
-    </div>
-
-    <div class="comment-form-div col">
-        <form class="comment-form" id="comment-form-{{post.id}}" post_id="{{post.id}}" method="POST"
-            action="{% url 'post:post-list' %}">
-            {% csrf_token %}
-            <input type="text" name="content" placeholder="Write a comment..." class="form-control">
-            <input type="text" name="parent" value="{{post.id}}" class="d-none">
-            <button type="submit" class="d-none"></button>
-        </form>
-    </div>
-</div>
-</div>
-{% endif %}

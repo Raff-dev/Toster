@@ -4,18 +4,20 @@
     box-sizing: border-box;
 }
 :root{
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
 }
-main{
-    min-height: 100vh;
-}
-body { 
+body {
+    position: relative;
     background-color: white;
     display: grid;
     grid-template-columns: 1fr 700px 1fr;
     grid-template-areas: 
-    "nav-left main nav-right"
-    ;
+    "nav-left main nav-right";
+}
+main{
+    grid-area: main;
+    min-height: 100vh;
+    display: block;
 }
 nav ul{
     height: fit-content;

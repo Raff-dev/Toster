@@ -14,21 +14,25 @@
 
 {%if user.is_authenticated%}
 
+
 <div class="create-div">
     <div class="left">
+
         <a href="{%url 'users:profile' user.profile.id %}"><img src="{{user.profile.profile_img.url}}"
                 alt="{{user.username}}"></a>
     </div>
 
     <div class="right">
         <div class="create-group">
-            <input id="create-input" class="create-input" type="text" name="content">
+            <form action="" id="create-form" enctype="multipart/form-data"></form>
+            <input id="create-input" form="create-form" class="create-input" type="text" name="content">
+            <input class="d-none" form="create-form" type="text" name="parent" value="">
             <label for="content">
                 <span>What's on your mind?</span>
             </label>
         </div>
-        <div class="post-images">
 
+        <div class="create-images" id="create-images">
         </div>
 
         <div class="bar">
@@ -50,22 +54,29 @@
 
             <div class="create-button-div">
 
-                <button class="create" id="create" post_id={{psot.id}} parent="" author="{{user.id}}">Publish</button>
+                <button class="create" id="create" url="{% url 'post:post-list' %}" post_id={{post.id}} parent=""
+                    author="{{user.id}}">Publish</button>
             </div>
         </div>
     </div>
 </div>
 
-
-
 </div>
 {%endif%}
-<div id="posts" class="posts"></div>
+<div id="posts" class="posts" url="{% url 'post:post-posts-ids' %}"></div>
 <div class="footer" id="footer">
 </div>
 {% endblock content %}
 {% block script %}
-<script src="{% static 'main/login_modal.js' %}"></script>
-<script src="{% static 'post/post.js' %}"></script>
-<script src="{% static 'post/home.js' %}"></script>
+<script>
+    var id_list = apiRequest($('#posts').attr('url'), 'GET');
+    loadPosts(id_list, 8, 'posts');
+    createPostListener($("#create"), "create-form");
+    togglePublishButton('create', "create-input")
+    addImage('#post-img-input')
+    scrollLoad(3, 'posts')
+
+
+
+</script>
 {%endblock%}

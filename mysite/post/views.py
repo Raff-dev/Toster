@@ -93,10 +93,14 @@ class PostTemplate(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PostTemplate, self).get_context_data(**kwargs)
         post = get_object_or_404(Post, pk=self.kwargs['pk'])
-        context['user'] = self.request.user
+        return context
 
-        if post.parent:
-            self.template_name = 'post/comment_template.html'
-            context['post'] = post.parent
-            context['comment'] = post
+
+class CommentModalTemplate(DetailView):
+    model = Post
+    template_name = 'post/comment_modal_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CommentModalTemplate, self).get_context_data(**kwargs)
+        context['user'] = self.request.user
         return context

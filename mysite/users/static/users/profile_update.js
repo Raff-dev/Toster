@@ -6,7 +6,6 @@ const ProfileUpdateInfo = () => {
         var method = form.attr("method");
         var formData = new FormData(this);
         console.log('endpoint: ', endPoint);
-        console.log('form data:', formData);
         $.ajax({
             url: endPoint,
             method: method,
@@ -31,4 +30,4 @@ $(".profile-update-modal-redirect").on("click", function () {
 $(".profile-update-modal-close").on('click', function () {
     document.querySelector(".profile-update-modal").style.display = 'none';
 })
-ProfileUpdateInfo();
+
