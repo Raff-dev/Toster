@@ -1,22 +1,110 @@
-.profile-profile-img{
-    object-fit: cover;
-    width:250px;
-    height:250px;
-    background-color: white;
-    border: thin;
+.data{
+    display: block;
+    padding: 15px;
 }
-.user-info li{
-    list-style: none;
-    text-transform: capitalize;
-    font-family: 'Open Sans', sans-serif;
-    
+.profile{
+  
 }
-.profile-info{
-    background-color: rgba(240,240,255, 1);
-    padding: 10px;
-    border-radius: 4px;
+.background{
+    width: 100%;
+    height: 200px;
+    background-color: rgba(51, 103, 172, 0.1);
 }
-.main-profile-info{
+.profile .top{
+    position: relative;
     display: flex;
-    flex-direction: row;
+    justify-content: flex-end;
+}
+.profile .profile-img{
+    position: absolute;
+    width:fit-content;
+    top:-150px;
+    left: 0;
+    height: fit-content;
+    background-color: white;
+    border-radius: 100%;
+    border: solid;
+    border-color: rgba(0, 0, 0, 0.1);
+    border-width: 2px;
+}
+.profile .profile-img .img-border{
+    border-radius: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+.profile .profile-img img{
+    border-radius: 100%;
+    border: solid;
+    border-color: rgba(0, 0, 0, 0.1);
+    border-width: 2px;
+    transition: 0.1s ease-in;
+    margin: 5px;
+    object-fit: cover;
+    width:200px;
+    height:200px;
+}
+.profile .profile-img img:hover{
+    cursor: pointer;
+    filter: brightness(75%);
+
+}
+
+.profile .info{
+    font-weight: 400;
+    font-size: 20px;
+    color: rgba(40, 52, 105, 0.7);
+}
+.profile .alias{
+    color: rgba(0, 0, 0, 0.8);
+    font-weight: 700;
+    font-size: 25px;
+}
+.profile .follow{
+    display: flex;
+}
+.profile .follow .following,.profile .follow .folowers{
+    display: flex;
+    padding-right: 15px;
+}
+.profile .follow p{
+    padding-right: 10px;
+}
+.profile .follow .count{
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.8);
+}
+.profile-update{
+    justify-content: center;
+    align-items: center;
+}
+.profile button{
+    border: none;
+    transition: 0.1s ease-in;
+    font-weight: 700;
+    font-size:20px;
+    background-color: white;
+}
+.profile button:hover{
+    background-color: rgba(54, 154, 230, 0.12);
+}
+.profile-update button{
+    width: fit-content;
+    height: 50px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border:solid;
+    border-radius: 25px;
+    border-width: 1px;
+    color: rgb(54, 154, 230);
+    border-color: rgb(54, 154, 230);
+}
+
+.bot{
+    margin-top: 10px;
+}
+.bot .info{
+    margin-bottom: 15px
+
 }

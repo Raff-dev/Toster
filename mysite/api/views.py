@@ -7,46 +7,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from .serializers import PostSerializer
-from ..models import Post, PostImage
-
-
-class PostLikeAPIToggle(APIView):
-    authentication_classes = (authentication.SessionAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get(self, request, format=None, *args, **kwargs,):
-        user = self.request.user
-        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
-        # post.liked_post_set.add(user)
-        print('likes', post.likes_set)
-        print('comments', post.comments)
-        print('liked_post', user.liked_post)
-        print('parent', post.parent)
-        if user in post.likes_set.all():
-            post.likes.remove(user)
-            liked = False
-            print('removed user from likes')
-        else:
-            post.likes.add(user)
-            liked = True
-            print('added user to likes')
-        data = {
-            'liked': liked,
-        }
-        print('data: ', data)
-        return Response(data)
-
-
-class PostsLiked(APIView):
-    def get(self, request, format=None, *args, **kwargs,):
-        data = {}
-        user = self.request.user
-        if user and user.is_authenticated:
-            posts = Post.objects.all()
-            for post in posts:
-                data[post.id] = user in post.likes.all()
-        return Response(data)
+from .serializers import PostSerializer, UsersSerializer
+from post.models import Post, PostImage
 
 
 class PostViewSet(viewsets.GenericViewSet):
@@ -131,3 +93,21 @@ class PostViewSet(viewsets.GenericViewSet):
         instance = self.get_object()
         instance.delete()
         return Response(True)
+
+
+class UsersViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UsersSerializer
+
+    @action(methods=['get'], detail=True)
+    def posts(self, request, format=None, *args, **kwargs):
+        instance = self.get_object()
+        posts = Post.objects.filter(
+            author=instance, parent=None).order_by('-timestamp')
+        return Response([post.id for post in posts])
+
+    @action(methods=['get'], detail=True)
+    def replies(self, request, format=None, *args, **kwargs):
+        instance = self.get_object()
+        posts = Post.objects.filter(author=instance).exclude(parent=None)
+        return Response([post.id for post in posts])

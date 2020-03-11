@@ -24,46 +24,86 @@
     </div>
 </div>
 
+<div class="background"></div>
 <div class="profile">
-    <div class="profile-info">
-        <div class="profile-background-img"></div>
-        <div class="main-profile-info">
-            <img class="profile-profile-img" src="{{profile.profile_img.url}}" alt="profile_img">
-            <div class="username">
-                <p>{{profile.user.username}}</p>
-                <p>{{profile.alias}}</p>
-                <p>{{profile.name}}</p>
-            </div>
-            <button class="btn btn-success" href="{{profile.get_update_profile_url}}">Edit View</button>
-            <button class='profile-update-modal-redirect btn btn-primary'>Edit</button>
-        </div>
-        <div>
-            <p>Joined: {{profile.join_timestamp}}</p>
-            <p>user id:{{profile.user.id}}</p>
-            <p>profile id:{{profile.id}}</p>
-            <p>{{profile.description}}</p>
-            <p>{{profile.user.email}}</p>
-            <p>Following: {{profile.following.count}}</p>
-            <p>Followers: {{profile.followers_set.all.count}}</p>
-        </div>
-    </div>
+    <div class="data">
 
-    <div>
-        <div class="posts text-white pt-2 mt-3"></div>
-        {% for post in posts %}
-        {% include 'post/post_template.html' with post=post user=user%}
+        <div class="top">
+            <div class="profile-img">
+                <div class="img-border">
+                    <img id='prof-pic' src="{{profile.profile_img.url}}" alt="profile_img">
+                </div>
+            </div>
+
+            <div class="profile-update">
+                <Button>
+                    <p>Edit profile</p>
+
+                </Button>
+            </div>
+        </div>
+
+        <div class="bot">
+            <div class="info">
+                <div class="alias">
+                    <p>{{profile.alias}}</p>
+                </div>
+                <div class="username">
+                    <p>@{{profile.user.username}}</p>
+                </div>
+                <div class="bio">
+                    <p>{{profile.description}}</p>
+                </div>
+                <div class="joined">
+                    <p>Joined {{profile.join_timestamp}}</p>
+                </div>
+                <div class="follow">
+                    <div class="following">
+                        <p>Following</p>
+                        <p class="count">{{profile.following.count}}</p>
+                    </div>
+                    <div class="followers">
+                        <p>Followers</p>
+                        <p class="count"> {{profile.followers_set.all.count}}</p>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-bot">
+                <div class="user-posts">
+                    <span>Posts</span>
+                </div>
+
+                <div class="user-replies">
+                    <div class="span">
+                        <span>Replies</span>
+                    </div>
+                </div>
+
+                <div class="user-media">
+                    <div class="span">
+                        <span>Media</span>
+                    </div>
+                </div>
+
+                <div class="user-likes">
+                    <div class="span">
+                        <span>Likes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <div class="posts"></div>
 </div>
 </a>
-{% endfor %}
-</div>
-</div>
-</div>
-</div>
 
+
+{% endblock content %}
+{% block script%}
 <script>
     ProfileUpdateInfo()
+    imagePreviewListener(document.getElementById("prof-pic"))
 </script>
-{% endblock %}
-{% block script%}
 {% endblock %}

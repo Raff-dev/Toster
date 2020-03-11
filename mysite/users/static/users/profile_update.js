@@ -1,4 +1,4 @@
-const ProfileUpdateInfo = () => {
+function ProfileUpdateInfo() {
     $(".profile-update-form").submit(function (event) {
         //event.preventDefault();
         var form = $(this);
@@ -24,7 +24,7 @@ const ProfileUpdateInfo = () => {
     })
 }
 
-$(".profile-update-modal-redirect").on("click", function () {
+$(".profile-update").on("click", function () {
     document.querySelector(".profile-update-modal").style.display = 'flex';
 })
 $(".profile-update-modal-close").on('click', function () {

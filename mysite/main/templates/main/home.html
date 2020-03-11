@@ -52,7 +52,7 @@
 
             <div class="create-button-div">
 
-                <button class="create" id="create" url="{% url 'post:post-list' %}" post_id={{post.id}} parent=""
+                <button class="create" id="create" url="{% url 'api:post-list' %}" post_id={{post.id}} parent=""
                     author="{{user.id}}">Publish</button>
             </div>
         </div>
@@ -61,7 +61,7 @@
 
 </div>
 {%endif%}
-<div id="posts" class="posts" url="{% url 'post:post-posts-ids' %}"></div>
+<div id="posts" class="posts" url="{% url 'api:post-posts-ids' %}"></div>
 <div class="footer" id="footer">
 </div>
 {% endblock content %}

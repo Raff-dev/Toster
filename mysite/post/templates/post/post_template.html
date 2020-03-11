@@ -26,14 +26,14 @@
 
                 <div class="dropdown hover" id="dropdown-{{post.id}}">
                     {% if user == post.author %}
-                    <div class="delete option" id='delete-{{post.id}}' url="{% url 'post:post-delete' post.id %}"
+                    <div class="delete option" id='delete-{{post.id}}' url="{% url 'api:post-delete' post.id %}"
                         post_id={{post.id}}>
                         <div>
                             <img src="{% static 'main/images/delete.png' %}" alt="delete">
                             <p>Delete</p>
                         </div>
                     </div>
-                    <div class="option edit" id="edit-{{post.id}}" url="{% url 'post:post-list' post.id %}"
+                    <div class="option edit" id="edit-{{post.id}}" url="{% url 'api:post-list' post.id %}"
                         post_id={{post.id}} method="POST">
                         <div>
                             <img src="{% static 'main/images/edit.png' %}" alt="edit" form="edit-form-{{post.id}}">
@@ -98,7 +98,7 @@
             <div class="post-images">
                 {% for img in post.images.all %}
                 <div class="post-image">
-                    <img src="{{ img.image.url }}" alt="post_image">
+                    <img class="image" src="{{ img.image.url }}" alt="post_image">
                 </div>
                 {% endfor %}
             </div>
@@ -125,7 +125,7 @@
 
         <nav class="nav-bot icon-set hover-set">
             <div class="like-div">
-                <div class="like hover" id='like-{{post.id}}' method="POST" url="{%url 'post:post-like' post.id %}"
+                <div class="like hover" id='like-{{post.id}}' method="POST" url="{%url 'api:post-like' post.id %}"
                     likes-count="{{post.likes.count}}" post_id={{post.id}} liked='false'>
                     <img src=" {% static 'main/images/like.png' %}" alt="like">
                     <img class="colored" src="{% static 'main/images/like_colored.png' %}" alt="like_colored">

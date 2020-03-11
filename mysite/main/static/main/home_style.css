@@ -44,7 +44,7 @@
     width: 100%;
     object-fit: cover;
 }
-.right .create-image .delete-image{
+.delete-image{
     justify-content: center;
     align-items: center;
     display: flex;
@@ -59,7 +59,7 @@
     width: 50px;
     height: 50px;
 }
-.create-image .x1,.create-image .x2{
+.delete-image .x1,.delete-image .x2{
     background-color: rgba(255, 255, 255, 0.815);
 }
 .x1,.x2{
@@ -76,8 +76,7 @@
 .x2{
     transform: rotate(45deg);
 }
-
-.right .create-images .delete-image:hover{
+.delete-image:hover{
     cursor: pointer;
     background-color: rgba(11, 11, 11,0.6);
     transform: scale(1.2);

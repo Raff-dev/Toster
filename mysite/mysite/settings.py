@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'crispy_forms',
     # local apps
+    'api.apps.ApiConfig',
     'main.apps.MainConfig',
     'polls.apps.PollsConfig',
     'users.apps.UsersConfig',
@@ -136,7 +137,7 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-LOGIN_REDIRECT_URL = 'main:main'
-LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'main:home'
+LOGIN_URL = 'main:login'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

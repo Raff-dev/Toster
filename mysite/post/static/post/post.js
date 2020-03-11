@@ -29,7 +29,6 @@ function togglePublishButton(button_id, input_id) {
 }
 function addImage(input_id, iscomment = false) {
     $(input_id).on("change", function () {
-        var that = this
         if (this.files && this.files[0]) {
             $(this.files).each((index, file) => {
                 if (iscomment) create_files = comment_create_files
@@ -59,13 +58,25 @@ function addImage(input_id, iscomment = false) {
 
     });
 }
+function imagePreviewListener(img) {
+    $(img).on("click", function () {
+        $('.img-preview').find('.img').append(img.cloneNode())
+        $('.img-preview').css('display', 'block')
+        $('#close-img-modal').on('click', function () {
+            $('.img-preview .img').empty()
+            $('.img-preview').css('display', 'none')
+        })
+    })
+}
 function postDetailRedirect(post_id) {
     $(document.getElementById("post-" + post_id)).click(function (e) {
         let c1 = $(e.target).parents('.like-div').length
         let c2 = $(e.target).parents('.share').length
         let c3 = $(e.target).parents('.comment').length
         let c4 = $(e.target).parents('.options').length
-        if (!c1 && !c2 && !c3 && !c4) {
+        let c5 = $(e.target).parents('.post-images').length
+        let c6 = $(e.target).parents('.img').length
+        if (!c1 && !c2 && !c3 && !c4 && !c5 && !c6) {
             let post = $(this).parent('.post').prevObject.get(0)
             window.location.replace($(post).attr("href"));
         }
@@ -148,6 +159,9 @@ function appendPost(node, mode, post_id) {
         addListeners(post_id);
         markLiked(post_id);
         markHref(post_id);
+        $(post).find('.image').each((index, elem) => {
+            imagePreviewListener(elem)
+        })
     }
 }
 //-----------------------
@@ -227,7 +241,6 @@ function apiRequest(url, method, data = null) {
     return result;
 }
 function addListeners(post_id) {
-    console.log('id', post_id)
     likePostListener(post_id);
     deletePostListener(post_id);
     commentPostListener(post_id)
@@ -262,7 +275,6 @@ function createPostListener(button, form_id, iscomment = false) {
     })
 }
 function deletePostListener(post_id) {
-    console.log('del', post_id)
     let btn_delete = document.getElementById("delete-" + post_id)
     if (btn_delete) {
         let btn_confirm = document.getElementById('alert-confirm')
@@ -312,9 +324,7 @@ function commentPostListener(post_id) {
         createPostListener($("#modal-create"), "modal-create-form", true)
         togglePublishButton('modal-create', "modal-create-input")
         addImage('#modal-img-input', true)
-
     })
-
 }
 function closeCommentModal() {
     let btn_confirm = document.getElementById('alert-confirm')
@@ -344,7 +354,6 @@ function closeCommentModal() {
             $('#comment-modal').empty()
         }
     })
-
 }
 
 const prepend = 0;
