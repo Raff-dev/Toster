@@ -1,0 +1,59 @@
+.alert{
+    display: none;
+}
+.alert .modal-content{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 30px;
+    width: fit-content;
+    transform: translateX(-50%) translateY(-50%);
+}
+.alert .info{
+    display: block;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.alert .info .title{
+    font-size: 18px;
+    opacity: .8;
+    font-weight: 800;
+}
+.alert .info .disclaimer{
+    opacity: 0.5;
+}
+.alert .buttons{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.alert .buttons .confirm, .alert .buttons .cancel{
+    cursor: pointer;
+    transition: 0.13s ease-in;
+    font-weight: 700;
+    justify-content: center;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 15px;
+    padding: 8px;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin: 10px;
+}
+.alert .buttons .confirm{
+    background-color: rgb(211, 54, 101);
+    color: white;
+}
+.alert .buttons .cancel{
+    background-color: rgba(177, 177, 177,.4);
+    color: rgb(66, 66, 66);
+}
+.alert .buttons .confirm:hover{
+    background-color: rgb(177, 44, 84);
+
+}
+.alert .buttons .cancel:hover{
+    background-color: rgb(158, 158, 158);
+
+}

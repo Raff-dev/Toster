@@ -227,12 +227,6 @@
     width:100%;
     height: 100%;
 }
-.comment .content{
-    border-radius: 20px;
-    background-color: #fffa;
-    width: fit-content;
-    display: inline-block;
-}
 .footer{
     grid-row-start: 3;
     grid-column-start: 2;

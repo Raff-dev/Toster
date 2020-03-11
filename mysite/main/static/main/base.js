@@ -24,9 +24,6 @@ $('.nav-left a').hover(function () {
 
 });
 
-function huj() {
-    console.log('chuj')
-}
 
 
 

@@ -109,11 +109,6 @@ function setLikeText(obj, newVal) {
     if (newVal == 1) $(obj).text(newVal + " Like");
     else $(obj).text(newVal + " Likes");
 }
-function confirmDelete() {
-    if (window.confirm("Are you sure you want to delete this post?"))
-        return true;
-    else return false;
-}
 function closeEdit(post_id) {
     var button = document.querySelector("#edit-button-" + post_id);
     document.querySelector("#edit-group-" + post_id).style.display = 'none';
@@ -232,6 +227,7 @@ function apiRequest(url, method, data = null) {
     return result;
 }
 function addListeners(post_id) {
+    console.log('id', post_id)
     likePostListener(post_id);
     deletePostListener(post_id);
     commentPostListener(post_id)
@@ -266,13 +262,34 @@ function createPostListener(button, form_id, iscomment = false) {
     })
 }
 function deletePostListener(post_id) {
-    $('#delete-' + post_id).on('click', function () {
-        if (confirmDelete(post_id)) {
-            let url = $(this).attr('url')
-            let method = 'post'
-            if (apiRequest(url, method)) postDeleted(post_id)
+    console.log('del', post_id)
+    let btn_delete = document.getElementById("delete-" + post_id)
+    if (btn_delete) {
+        let btn_confirm = document.getElementById('alert-confirm')
+        let btn_cancel = document.getElementById('alert-cancel')
+        btn_delete.onclick = () => {
+            $('#alert').css('display', 'flex')
+            $('#alert-confirm').text('Delete Post?')
+            $('#alert-title').text('Delete')
+            btn_confirm.onclick = () => {
+                let url = $(btn_delete).attr('url')
+                let method = 'post'
+
+                if (apiRequest(url, method)) {
+                    postDeleted(post_id)
+                    $('#alert').css('display', 'none')
+                } else console.log('deletion failed')
+                $(btn_delete).unbind()
+                $(btn_cancel).unbind()
+
+            }
+            btn_cancel.onclick = () => {
+                $('#alert').css('display', 'none')
+                $(btn_delete).unbind()
+                $(btn_cancel).unbind()
+            }
         }
-    })
+    }
 }
 function editlListener(post_id) {
     $('#edit-' + post_id).on('click', function () {
@@ -284,25 +301,51 @@ function editlListener(post_id) {
     })
 }
 function commentPostListener(post_id) {
+    let destination = document.getElementById('comment-modal')
     $("#comment-" + post_id).on("click", function () {
-        let destination = document.getElementById('comment-modal')
         let url = $(this).attr('url')
         let method = 'GET'
         let modal = apiRequest(url, method)
         $(destination).empty()
         destination.innerHTML = modal
+        closeCommentModal()
         createPostListener($("#modal-create"), "modal-create-form", true)
         togglePublishButton('modal-create', "modal-create-input")
         addImage('#modal-img-input', true)
 
-        $("#close-comment-modal").on('click', function () {
-            $(destination).empty()
-        })
     })
+
+}
+function closeCommentModal() {
+    let btn_confirm = document.getElementById('alert-confirm')
+    let btn_cancel = document.getElementById('alert-cancel')
+
+    $("#close-comment-modal").on('click', function () {
+        var inputval = document.getElementById('modal-create-input').value
+        if (inputval.length) {
+            $('#alert').css('display', 'flex')
+            $('#alert-confirm').text('Discard Post?')
+            $('#alert-title').text('Discard')
+
+            btn_confirm.onclick = () => {
+                comment_create_files = []
+                $('#alert').css('display', 'none')
+                $('#comment-modal').empty()
+                $(btn_confirm).unbind()
+                $(btn_cancel).unbind()
+            }
+            btn_cancel.onclick = () => {
+                $('#alert').css('display', 'none')
+                $(btn_confirm).unbind()
+                $(btn_cancel).unbind()
+            }
+        } else {
+            comment_create_files = []
+            $('#comment-modal').empty()
+        }
+    })
+
 }
 
 const prepend = 0;
 const append = 1;
-
-
-
