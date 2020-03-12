@@ -18,9 +18,10 @@
     <link rel="stylesheet" href="{% static 'main/alert_style.css'%}">
     <link rel="stylesheet" href="{% static 'main/home_style.css'%}">
     <link rel="stylesheet" href="{% static 'post/post_style.css'%}">
+    <link rel="stylesheet" href="{% static 'main/input_style.css'%}">
     {% block link %}{% endblock %}
 
-    <title>Raff</title>
+    <title>Toster</title>
 </head>
 
 
@@ -43,11 +44,11 @@
     </div>
     <div class="img-preview">
         <div class="modal-bg">
+            <div class="delete-image" id="close-img-modal">
+                <div class="x1"></div>
+                <div class="x2"></div>
+            </div>
             <div class="modal-content">
-                <div class="delete-image" id="close-img-modal">
-                    <div class="x1"></div>
-                    <div class="x2"></div>
-                </div>
                 <div class="img">
 
                 </div>

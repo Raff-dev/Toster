@@ -10,15 +10,16 @@ from .models import Profile
 def ensure_alias(sender, instance, **kwargs):
     if not instance.alias:
         instance.alias = instance.user.username
-        instance.save()
 
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     print(f'creating profile for user {instance}')
+    print('TIMEZONEEE', timezone.now())
     if created:
-        Profile.objects.create(user=instance)
-        instance.profile.join_timestamp = timezone.now()
+        Profile.objects.create(user=instance, join_timestamp=timezone.now())
+        print('CREATEDDDED', created, kwargs)
+        print('CREATEDDDED', created, kwargs)
 
 
 @receiver(post_save, sender=User)

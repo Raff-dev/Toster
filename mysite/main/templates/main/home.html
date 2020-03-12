@@ -15,9 +15,10 @@
 
 <div class="create-div">
     <div class="left">
-
-        <a href="{%url 'users:profile' user.profile.id %}"><img src="{{user.profile.profile_img.url}}"
-                alt="{{user.username}}"></a>
+        <div class="profile-img">
+            <a href="{%url 'users:profile' user.profile.id %}"><img src="{{user.profile.profile_img.url}}"
+                    alt="{{user.username}}"></a>
+        </div>
     </div>
 
     <div class="right">

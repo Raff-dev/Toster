@@ -26,45 +26,55 @@
 
 <div class="background"></div>
 <div class="profile">
-    <div class="data">
+    <div class="profile-data">
         <div class="top">
             <div class="profile-img">
                 <div class="img-border">
                     <img id='prof-pic' src="{{profile.profile_img.url}}" alt="profile_img">
                 </div>
             </div>
-
+            {%if profile.user == user %}
             <div class="profile-update">
                 <Button>
                     <p>Edit profile</p>
-
                 </Button>
             </div>
+            {%else%}
+            <div class="profile-follow">
+                <button>
+                    <p>Follow</p>
+                </button>
+            </div>
+            {%endif%}
         </div>
 
         <div class="bot">
             <div class="info">
-                <div class="alias">
-                    <p>{{profile.alias}}</p>
+                <div class="name">
+                    <div class="alias">
+                        <p>{{profile.alias}}</p>
+                    </div>
+
+                    <div class="username">
+                        <p>@{{profile.user.username}}</p>
+                    </div>
                 </div>
-                <div class="username">
-                    <p>@{{profile.user.username}}</p>
-                </div>
+
                 <div class="bio">
                     <p>{{profile.description}}</p>
                 </div>
                 <div class="joined">
-                    <p>Joined {{profile.join_timestamp}}</p>
+                    <p>Joined {{post.author.profile.join_timestamp}}</p>
                 </div>
                 <div class="follow">
                     <div class="following">
                         <p>Following</p>
                         <p class="count">{{profile.following.count}}</p>
                     </div>
+
                     <div class="followers">
                         <p>Followers</p>
                         <p class="count"> {{profile.followers_set.all.count}}</p>
-
                     </div>
                 </div>
             </div>
@@ -94,36 +104,32 @@
             </div>
         </div>
     </div>
-    <div class="posts">
-        <div id="user-posts" url="{% url 'api:user-posts' profile.user.id %}"></div>
-        <div id="user-replies" url="{% url 'api:user-replies' profile.user.id %}"></div>
-        <div id="user-media" url="{% url 'api:user-media' profile.user.id %}"></div>
-        <div id="user-likes" url="{% url 'api:user-likes' profile.user.id %}"></div>
-    </div>
 </div>
-</a>
+
+<div class="posts">
+    <div id="user-posts" url="{% url 'api:user-posts' profile.user.id %}"></div>
+    <div id="user-replies" url="{% url 'api:user-replies' profile.user.id %}"></div>
+    <div id="user-media" url="{% url 'api:user-media' profile.user.id %}"></div>
+    <div id="user-likes" url="{% url 'api:user-likes' profile.user.id %}"></div>
+</div>
 
 
 {% endblock content %}
 {% block script%}
 <script>
     let buttons = document.getElementsByClassName("switch-content")
-    console.log(buttons)
     for (const button of buttons) $(button).on('click', function (click, kek) {
-
         let button = $(click.target).closest('.switch-content')
         let div_id = button.attr('div')
         let div = $("#" + div_id)
         if (div.children().length) return
         $('.posts').children().each((index, el) => {
-            console.log(el)
             $(el).empty()
         })
         $('.switch-content').removeClass('clicked')
         button.toggleClass('clicked')
         let url = div.attr('url')
         let ids = apiRequest(url, 'get')
-        console.log('ids', ids)
         loadPosts(ids, 5, div_id)
     })
     ProfileUpdateInfo()

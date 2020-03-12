@@ -5,11 +5,8 @@ from .models import Profile
 
 
 class UserRegisterForm(UserCreationForm):
-    from django.core.validators import RegexValidator
-    alphanumeric = RegexValidator(
-        r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
     email = forms.EmailField(
-        label="E-mail", validators=[alphanumeric])
+        label="E-mail")
 
     class Meta:
         model = User

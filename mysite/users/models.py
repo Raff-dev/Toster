@@ -11,7 +11,7 @@ class Profile(models.Model):
     letters = RegexValidator(r'^[a-zA-Z ]*$', 'Only letters are allowed.')
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    join_timestamp = models.DateField()
+    join_timestamp = models.DateField(blank=True)
     alias = models.CharField(max_length=50, blank=True,
                              validators=[alphanumeric])
     name = models.CharField(max_length=60, blank=True,

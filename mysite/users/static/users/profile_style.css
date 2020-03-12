@@ -1,21 +1,17 @@
-.data{
-    display: block;
-    padding: 15px;
-}
-.profile{
-  
-}
 .background{
     width: 100%;
     height: 200px;
     background-color: rgba(51, 103, 172, 0.1);
 }
-.profile .top{
+.profile .profile-data{
+    padding: 15px;
+}
+.profile .profile-data .top{
     position: relative;
     display: flex;
     justify-content: flex-end;
 }
-.profile .profile-img{
+.profile .profile-data .profile-img{
     position: absolute;
     width:fit-content;
     top:-150px;
@@ -27,92 +23,57 @@
     border-color: rgba(0, 0, 0, 0.1);
     border-width: 2px;
 }
-.profile .profile-img .img-border{
+.profile .profile-data .profile-img .img-border{
     border-radius: 100%;
     overflow: hidden;
     margin: 0;
     padding: 0;
     background-color: white;
 }
-.profile .profile-img img{
+.profile  .profile-data .profile-img img{
     border-radius: 100%;
     border: solid;
     border-color: rgba(0, 0, 0, 0.1);
     border-width: 2px;
     transition: 0.1s ease-in;
-    margin: 5px;
     object-fit: cover;
+}
+.profile .profile-data .profile-img img{
+    margin: 5px;
     width:200px;
     height:200px;
 }
-.profile .profile-img img:hover{
-    cursor: pointer;
-    filter: brightness(75%);
 
-}
-
-.profile .info{
-    font-weight: 400;
-    font-size: 20px;
-    color: rgba(40, 52, 105, 0.7);
-}
-.profile .alias{
+.profile .profile-data .alias{
     color: rgba(0, 0, 0, 0.8);
     font-weight: 700;
     font-size: 25px;
 }
-.profile .follow{
-    display: flex;
-}
-.profile .follow .following,.profile .follow .folowers{
-    display: flex;
-    padding-right: 15px;
-}
-.profile .follow p{
-    padding-right: 10px;
-}
-.profile .follow .count{
-    font-weight: 700;
-    color: rgba(40, 52, 105, 0.9);    
-}
-.profile-update{
+
+.profile-update, .profile-follow{
     justify-content: center;
     align-items: center;
-}
-.profile button{
-    border: none;
-    transition: 0.1s ease-in;
-    font-weight: 700;
-    font-size:20px;
-    background-color: white;
-}
-.profile button:hover{
-    background-color: rgba(54, 154, 230, 0.12);
-}
-.profile-update button{
-    width: fit-content;
-    height: 50px;
+    border-color: rgb(54, 154, 230);
+    color: rgb(54, 154, 230);;
     padding-left: 15px;
     padding-right: 15px;
     border:solid;
     border-radius: 25px;
     border-width: 1px;
-    color: rgb(54, 154, 230);
-    border-color: rgb(54, 154, 230);
+    width: fit-content;
+    height: fit-content;
+
 }
 
-.bot{
-    margin-top: 10px;
-}
-.bot .info{
-    margin-bottom: 15px
-}
-.profile .nav-bot{
-    padding:0;
+.profile-update button,.profile-follow button{
+    border-radius: 25px;
+    outline:none;
+    width: fit-content;
+    height: 50px;
+    color: rgb(54, 154, 230);
 }
 .profile .nav-bot .switch-content{
-    color: rgba(40, 52, 105, 0.9);
-
+    color: rgba(50, 55, 77, 0.7);
     transition: 0.1s ease-in;
     display:flex;
     justify-content: center;
@@ -139,4 +100,53 @@
 
 .profile .switch-content.clicked span{
     color: rgb(54, 154, 230);
+}
+
+
+
+
+.profile-data .info{
+    font-weight: 500;
+    font-size: 18px;
+    color: rgba(40, 52, 105, 0.7);
+}
+.profile-data .info >div{
+    margin-bottom: 4px;
+}
+.profile-data .info .name{
+    padding-bottom: 8px;
+}
+.profile-data .follow{
+    display: flex;
+}
+.profile-data .follow .following,.profile .follow .folowers{
+    display: flex;
+    padding-right: 15px;
+}
+.profile-data .follow p{
+    padding-right: 10px;
+}
+.profile-data .follow .count{
+    font-weight: 700;
+    color: rgba(40, 52, 105, 0.9);    
+}
+.profile-data button{
+    background-color: #fff0;
+    border: none;
+    transition: 0.1s ease-in;
+    font-weight: 700;
+    font-size:20px;
+}
+.profile-data .profile-update:hover,
+.profile-data .profile-follow:hover{
+    background-color: rgba(54, 154, 230, 0.12);
+}
+.profile-data .bot{
+    margin-top: 10px;
+}
+.profile-data .bot .info{
+    margin-bottom: 15px
+}
+.profile .nav-bot{
+    padding:0;
 }

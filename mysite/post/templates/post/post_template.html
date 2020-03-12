@@ -4,19 +4,72 @@
 {% load js %}
 <div class="post" id="post-{{post.id}}" href="{% url 'post:post_detail' post.id %}">
     <div class="left">
-        <a href="{%url 'users:profile' post.author.profile.id %}">
-            <img src="{{post.author.profile.profile_img.url}}" alt="{{post.author.username}}">
-        </a>
+        <div class="profile-img">
+            <a href="{%url 'users:profile' post.author.profile.id %}">
+                <img src="{{post.author.profile.profile_img.url}}" alt="{{post.author.username}}">
+            </a>
+        </div>
     </div>
     <div class="right">
+
         <nav class="nav-top">
             <div class="info">
-                <a class="alias"
-                    href="{%url 'users:profile' post.author.profile.id %}">{{post.author.profile.alias}}</a>
+                <div>
+                    <a class="alias"
+                        href="{%url 'users:profile' post.author.profile.id %}">{{post.author.profile.alias}}</a>
+                    <div class="profile-snippet">
+                        <div class="profile-data">
+                            <div class="top">
+                                <div class="profile-img">
+                                    <img id='prof-pic' src="{{post.author.profile.profile_img.url}}" alt="profile_img">
+                                </div>
+                                {%if post.author != user %}
+                                <div class="profile-follow">
+                                    <button>
+                                        <p>Edit profile</p>
+                                    </button>
+                                </div>
+                                {%endif%}
+                            </div>
+
+                            <div class="bot">
+                                <div class="snippet-info">
+                                    <div class="name">
+                                        <div class="alias">
+                                            <a href="{%url 'users:profile' post.author.profile.id %}">
+                                                <p>{{post.author.profile.alias}}</p>
+                                            </a>
+                                        </div>
+                                        <div class="username">
+                                            <p>@{{post.author.username}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="bio">
+                                        <p>{{post.author.profile.description}}</p>
+                                    </div>
+
+                                    <div class="follow">
+                                        <div class="following">
+                                            <p>Following</p>
+                                            <p class="count">{{post.author.profile.following.count}}</p>
+                                        </div>
+                                        <div class="followers">
+                                            <p>Followers</p>
+                                            <p class="count"> {{post.author.profile.followers_set.all.count}}</p>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <p class="username">@{{post.author}}</p>
                 <p class="timestamp-dot">•</p>
                 <p class="timestamp">{{post.timestamp|naturaltime}}</p>
             </div>
+
+
             <div class="options" id="options-{{post.id}}">
                 <div class="dots">
                     <div class=" dot1"></div>

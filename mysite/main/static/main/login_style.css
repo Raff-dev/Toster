@@ -1,0 +1,50 @@
+body{
+    display: flex;
+    justify-content: center;
+}
+.center{
+    padding-top:5%;
+    width: 50%;
+    text-align: center;
+}
+.toster-image{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+.toster-image img{
+    width: 80px;
+    height: 80px;
+}
+.toster-text{
+    font-weight: 700;
+    font-size: 24px;
+}
+.login-view .input {
+    margin: 10px;
+}
+.login-button, button{
+    width: 100%;
+    border-radius: 25px;
+    height:60px
+}
+.login-button{
+    margin-top:10px;
+    background-color: rgb(54, 154, 230);;
+}
+button{
+    background-color: #fff0;
+    border: none;
+    outline: none;
+    color:white;
+    font-size: 18px;
+    font-weight: 700;
+}
+.links{
+    display: flex;
+    justify-content: center;
+}
+.links small{
+    margin-left:10px;
+    margin-right:10px;
+}

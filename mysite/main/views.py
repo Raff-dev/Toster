@@ -1,32 +1,34 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.views import (
-    LoginView as AuthLoginView, LogoutView as AuthLogoutView)
-from django.contrib.auth import login
+from django.contrib.auth.views import LoginView as AuthLoginView
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.utils import timezone
 from post.models import Post
 from post.forms import PostForm
-
 from users.forms import UserRegisterForm
 # Create your views here.
 
 
-def main(request):
-    if request.user.is_authenticated:
-        return redirect('main:home')
-    return render(request, 'main/main.html')
-
-
 def register(request):
     if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
+        print(request.POST)
+        data = request.POST.copy()
+        data['join_timestamp'] = timezone.now()
+        form = UserRegisterForm(data)
         if form.is_valid():
+            print(form)
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}!')
+            new_user = authenticate(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1'],
+            )
+            login(request, new_user)
             return redirect('main:home')
     else:
         form = UserRegisterForm()
-    return render(request, 'users/register.html', {'form': form})
+    return render(request, 'main/register.html', {'form': form})
 
 
 class LoginView(AuthLoginView):
@@ -42,10 +44,6 @@ class LoginView(AuthLoginView):
         return super(LoginView, self).get(request, *args, **kwargs)
 
 
-class LogoutView(AuthLogoutView):
-    asd = 5
-
-
 def home(request):
     if request.user.is_authenticated:
         most_recent = Post.objects.filter(
@@ -57,4 +55,4 @@ def home(request):
             'posts_all': posts_all,
         }
         return render(request, 'main/home.html', context)
-    return redirect('users:login')
+    return redirect('main:login')

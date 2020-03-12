@@ -1,2 +1,129 @@
-<a href="{%url 'main:login' %}">login</a>
-<a href="{%url 'main:register' %}">register</a>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="vievport" content="width=device-width" , initial-scale="1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway|Raleway:800,900|&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'main/main_style.css'%}">
+    <link rel="stylesheet" href="{% static 'main/input_style.css'%}">
+
+    <title>Toster</title>
+</head>
+
+
+<body id="body">
+    <main>
+        <div class="left ">
+            <img class="colored" src="{% static 'main/images/twitter_colored.png' %}" alt="twitter">
+            <div class="center">
+                <div class="text">
+                    <img class="colored" src="{% static 'main/images/twitter.png' %}" alt="twitter">
+                    <div>
+                        <p>Follow your interests.</p>
+                    </div>
+                </div>
+                <div class="text">
+                    <img class="colored" src="{% static 'main/images/twitter.png' %}" alt="twitter">
+                    <div>
+                        <p>Hear what people are talking about.</p>
+                    </div>
+                </div>
+                <div class="text">
+                    <img class="colored" src="{% static 'main/images/twitter.png' %}" alt="twitter">
+                    <div>
+                        <p>Join the conversation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <div class="login">
+                <form id="login-form" method="POST">
+                    {% csrf_token %}
+                    <div class="uss">
+                        <div class="input">
+                            {{form.username}}
+                            <label for="username">
+                                <span class="input-name">username</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="pass">
+                        <div class="input">
+                            {{form.password}}
+                            <label for="password">
+                                <span class="input-name">password</span>
+                            </label>
+                        </div>
+                        <small><a href="#">Forgot password?</a></small>
+                    </div>
+                    <div class="login-button-div">
+                        <div class="login-button">
+                            <button form="login-form" type="submit">Log in</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="center">
+                <div class="icon">
+                    <img class="colored" src="{% static 'main/images/twitter_colored.png' %}" alt="twitter">
+                </div>
+                <div class="text2">
+                    <span>
+                        See what’s happening in the world right now
+                    </span>
+                </div>
+                <div class="join-text">
+                    <span><strong>Join Today.</strong></span>
+                </div>
+
+                <a href="{% url 'main:register'%}">
+                    <div class="signup">
+                        <button>Sign up</button>
+                    </div>
+                </a>
+
+                <a href="{% url 'main:login'%}">
+                    <div class="login-redirect">
+                        <button>Log in</button>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <div class="footer d-block">
+        <div class="links">
+            <p>About</p>
+            <p>Help Center</p>
+            <p>Terms</p>
+            <p>Privacy policy</p>
+            <p>Cookies</p>
+            <p>Ads info</p>
+            <p>Blog</p>
+            <p>Status</p>
+            <p>Jobs</p>
+            <p>Settings</p>
+            <p>Directory</p>
+            <p>Developers</p>
+            <p>Businesses</p>
+            <p>Marketing</p>
+            <p>Brand</p>
+        </div>
+        <div class="trademark ">© 2020 Toster, Inc.</div>
+    </div>
+</body>
+<script>
+    $(document).ready(function () {
+        $(document).focus()
+    })
+</script>
+
+</html>
