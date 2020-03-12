@@ -73,7 +73,7 @@
 }
 .profile .follow .count{
     font-weight: 700;
-    color: rgba(0, 0, 0, 0.8);
+    color: rgba(40, 52, 105, 0.9);    
 }
 .profile-update{
     justify-content: center;
@@ -106,5 +106,37 @@
 }
 .bot .info{
     margin-bottom: 15px
+}
+.profile .nav-bot{
+    padding:0;
+}
+.profile .nav-bot .switch-content{
+    color: rgba(40, 52, 105, 0.9);
 
+    transition: 0.1s ease-in;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    font-size: 20px;
+    font-weight: 700;
+    border-bottom: solid;
+    border-bottom-width:2px;
+    border-bottom-color: white;
+}
+.profile .nav-bot .switch-content:hover{
+    cursor: pointer;
+    background-color: rgba(54, 154, 230, 0.12);
+    border-bottom-color: rgba(54, 154, 230, 0.0);
+}
+.profile .switch-content.clicked{
+    border-bottom-color: rgb(54, 154, 230);
+}
+.profile .switch-content.clicked:hover{
+    border-bottom-color: rgb(54, 154, 230);
+}
+
+.profile .switch-content.clicked span{
+    color: rgb(54, 154, 230);
 }

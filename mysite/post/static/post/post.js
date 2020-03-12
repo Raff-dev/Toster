@@ -141,7 +141,10 @@ function editOnClick(post_id) {
     });
 }
 function loadPosts(id_list, count, destination_id) {
+    console.log('did', destination_id)
+
     var destination = document.getElementById(destination_id)
+    console.log(destination)
     var posts_loaded = destination.childElementCount
     var lim = Math.min(posts_loaded + count, Object.keys(id_list).length)
     for (; posts_loaded < lim; posts_loaded++) {

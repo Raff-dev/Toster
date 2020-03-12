@@ -111,3 +111,15 @@ class UsersViewSet(viewsets.GenericViewSet):
         instance = self.get_object()
         posts = Post.objects.filter(author=instance).exclude(parent=None)
         return Response([post.id for post in posts])
+
+    @action(methods=['get'], detail=True)
+    def likes(self, request, format=None, *args, **kwargs):
+        instance = self.get_object()
+        posts = Post.objects.filter(likes=instance)
+        return Response([post.id for post in posts])
+
+    @action(methods=['get'], detail=True)
+    def media(self, request, format=None, *args, **kwargs):
+        instance = self.get_object()
+        posts = Post.objects.filter(author=instance).exclude(images=None)
+        return Response([post.id for post in posts])

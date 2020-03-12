@@ -27,7 +27,6 @@
 <div class="background"></div>
 <div class="profile">
     <div class="data">
-
         <div class="top">
             <div class="profile-img">
                 <div class="img-border">
@@ -69,33 +68,38 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="nav-bot">
-                <div class="user-posts">
-                    <span>Posts</span>
-                </div>
+    <div class="nav-bot">
+        <div class="switch-content" id="user-posts-button" div="user-posts">
+            <span>Posts</span>
+        </div>
 
-                <div class="user-replies">
-                    <div class="span">
-                        <span>Replies</span>
-                    </div>
-                </div>
+        <div class="switch-content" id="user-replies-button" div="user-replies">
+            <div class="span">
+                <span>Replies</span>
+            </div>
+        </div>
 
-                <div class="user-media">
-                    <div class="span">
-                        <span>Media</span>
-                    </div>
-                </div>
+        <div class="switch-content" id="user-media-button" div="user-media">
+            <div class="span">
+                <span>Media</span>
+            </div>
+        </div>
 
-                <div class="user-likes">
-                    <div class="span">
-                        <span>Likes</span>
-                    </div>
-                </div>
+        <div class="switch-content" id="user-likes-button" div="user-likes">
+            <div class="span">
+                <span>Likes</span>
             </div>
         </div>
     </div>
-    <div class="posts"></div>
+    <div class="posts">
+        <div id="user-posts" url="{% url 'api:user-posts' profile.user.id %}"></div>
+        <div id="user-replies" url="{% url 'api:user-replies' profile.user.id %}"></div>
+        <div id="user-media" url="{% url 'api:user-media' profile.user.id %}"></div>
+        <div id="user-likes" url="{% url 'api:user-likes' profile.user.id %}"></div>
+    </div>
 </div>
 </a>
 
@@ -103,7 +107,27 @@
 {% endblock content %}
 {% block script%}
 <script>
+    let buttons = document.getElementsByClassName("switch-content")
+    console.log(buttons)
+    for (const button of buttons) $(button).on('click', function (click, kek) {
+
+        let button = $(click.target).closest('.switch-content')
+        let div_id = button.attr('div')
+        let div = $("#" + div_id)
+        if (div.children().length) return
+        $('.posts').children().each((index, el) => {
+            console.log(el)
+            $(el).empty()
+        })
+        $('.switch-content').removeClass('clicked')
+        button.toggleClass('clicked')
+        let url = div.attr('url')
+        let ids = apiRequest(url, 'get')
+        console.log('ids', ids)
+        loadPosts(ids, 5, div_id)
+    })
     ProfileUpdateInfo()
     imagePreviewListener(document.getElementById("prof-pic"))
+    $('#user-posts-button').click()
 </script>
 {% endblock %}

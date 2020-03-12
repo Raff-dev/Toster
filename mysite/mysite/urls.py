@@ -7,7 +7,6 @@ from .settings import DEBUG
 
 
 urlpatterns = [
-
     path('', include('main.urls')),
     path('', include('users.urls')),
     path('api/', include((router.urls, 'api'), namespace='api')),

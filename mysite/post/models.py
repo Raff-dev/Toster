@@ -14,7 +14,7 @@ class Post(models.Model):
     parent = models.ForeignKey(
         'self', related_name='comments', on_delete=models.CASCADE, null=True, blank=True)
     likes = models.ManyToManyField(
-        User, related_name='liked_posts', blank=True)
+        User, related_name='users', blank=True)
 
     snippet_length = 350
 
