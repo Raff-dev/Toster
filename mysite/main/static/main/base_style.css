@@ -10,7 +10,7 @@ body {
     position: relative;
     background-color: white;
     display: grid;
-    grid-template-columns: 1fr 700px 1fr;
+    grid-template-columns: 1fr 600px 1fr;
     grid-template-areas: 
     "nav-left main nav-right";
 }
@@ -42,18 +42,22 @@ nav ul{
     display: block;
     justify-content: space-around;
 }
+
 .nav-left .links li{
+    transition: all 0.2s ease-out;
     opacity: 0.8;
     list-style: none;
     padding: 4px;
     width: fit-content;
+    border-radius: 25px;
 }
 .nav-left .links a{
+    width: fit-content;
+    height: fit-content;
     text-decoration: none;
 }
 .nav-left .links div{
     position: relative;
-    transition: all 0.2s ease-out;
     width: fit-content;
     height: fit-content;
     display: flex;
@@ -71,20 +75,35 @@ nav ul{
     margin: 0;
     padding: 0;
 }
-.nav-left img{
-    transition: 0.2s ease-in;
+.nav-left a img{
+    transition: 0.1s ease-in;
     width: 30px;
     height: 30px;
     margin-right: 15px;
 }
-.nav-left .colored{
+.nav-left .colored, .nav-left .filled{
     position: absolute;
     opacity: 0;
+}
+.nav-left a:hover  li{
+    background-color:rgba(23, 139, 228, .18) ;
+}
+.nav-left a:hover .black{
+    opacity: 0;
+}
+.nav-left a:hover .colored{
+    opacity: 1;
 }
 .nav-left .profile img{
     border-radius: 100%;
     object-fit: cover;
     background-color: white;
+}
+.nav-left .logo{
+    border-radius: 100%;
+}
+.nav-left .logo img{
+    margin: 0;
 }
 .nav-right{
     grid-area: nav-right;
@@ -153,6 +172,7 @@ main .profile-img img:hover{
     border-radius: 100%;
     object-fit: cover;
 }
+
 /* 
 @media screen and (max-width: 1000px){
     

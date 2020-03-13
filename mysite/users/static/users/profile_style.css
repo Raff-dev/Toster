@@ -2,6 +2,7 @@
     width: 100%;
     height: 200px;
     background-color: rgba(51, 103, 172, 0.1);
+    overflow: hidden;
 }
 .profile .profile-data{
     padding: 15px;
@@ -10,6 +11,7 @@
     position: relative;
     display: flex;
     justify-content: flex-end;
+    pad
 }
 .profile .profile-data .profile-img{
     position: absolute;
@@ -102,6 +104,90 @@
     color: rgb(54, 154, 230);
 }
 
+.update-modal{
+    display: none;
+}
+
+.background > img{
+    width: 100%;
+    object-fit: cover;
+}
+.update-modal .background{
+    position: relative;
+    height: 180px;
+}
+
+.update-modal .top label{
+    transition: 0.3s ease;
+    padding: 8px;
+    border-radius: 100%;
+    margin: 0em;
+}
+.update-modal .background label{
+background-color: #0003;
+}
+.update-modal label img{
+    width: 25px;
+    height: 25px;
+}
+.update-modal .top label:hover{
+    cursor: pointer;
+    background-color: rgba(255,255, 255, 0.4);
+
+
+}
+.update-modal .background label:hover{
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+#id_profile_img{
+    visibility: hidden;
+}
+.spacing{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    display: flex;
+    justify-content: start;
+}
+.update-modal .profile-img-div{
+    border-radius: 100%;
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    border: 3px solid white;
+    top: -80px;
+}
+.modal-profile-img{
+    position: absolute;
+    border-radius: 100%;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+.modal-profile-img .modal-img-border img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(75%);
+}
+.update-modal label{
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    opacity: 0.7;
+}
+.update-modal .prof-pic{
+    width: 75px;
+    height: 75px;
+}
+
+.update-modal .bot{
+    padding: 10px;
+}
+
 
 
 
@@ -149,4 +235,37 @@
 }
 .profile .nav-bot{
     padding:0;
+}
+.save-div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.save-button{
+    transition: 0.1s ease-in;
+    width: fit-content;
+    height: fit-content;
+    margin-top: 5px;
+    padding: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-radius: 25px;
+    background-color: rgb(54, 154, 230);
+    align-items: center;
+    justify-content: center;
+}
+.save-button:hover{
+    background-color: rgb(42, 139, 214);
+}
+.save-button button{
+    background-color: #fff0;
+    font-weight: 700;
+    font-size:20px;
+    border: none;
+    border-radius: 25px;
+    width: 100%;
+    color: white;
+}
+.save-button button:focus{
+    outline: none;
 }

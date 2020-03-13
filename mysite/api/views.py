@@ -109,7 +109,8 @@ class UsersViewSet(viewsets.GenericViewSet):
     @action(methods=['get'], detail=True)
     def replies(self, request, format=None, *args, **kwargs):
         instance = self.get_object()
-        posts = Post.objects.filter(author=instance).exclude(parent=None)
+        posts = Post.objects.filter(author=instance).exclude(
+            parent=None).order_by('-timestamp')
         return Response([post.id for post in posts])
 
     @action(methods=['get'], detail=True)
@@ -121,5 +122,6 @@ class UsersViewSet(viewsets.GenericViewSet):
     @action(methods=['get'], detail=True)
     def media(self, request, format=None, *args, **kwargs):
         instance = self.get_object()
-        posts = Post.objects.filter(author=instance).exclude(images=None)
+        posts = Post.objects.filter(author=instance).exclude(
+            images=None).order_by('-timestamp')
         return Response([post.id for post in posts])

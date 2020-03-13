@@ -59,19 +59,18 @@
     <nav class="nav-left">
         <div class="nav-left2">
             <ul class="links">
-                <a href="/">
-                    <li>
+                <a href="/home/">
+                    <li class="logo">
                         <div>
-                            <img src="{% static 'main/images/twitter.png' %}" alt="twitter">
-                            <img class="colored" src="{% static 'main/images/twitter_colored.png' %}" alt="twitter">
-                            <p>Logo</p>
+                            <img src="{% static 'main/images/twitter_filled.png' %}" alt="twitter">
                         </div>
                     </li>
                 </a>
-                <a href="/">
+                <a href="/home/">
                     <li>
                         <div>
-                            <img src="{% static 'main/images/home.png' %}" alt="home">
+                            <img class="filled" src="{% static 'main/images/home_filled.png' %}" alt="home">
+                            <img class="black" src="{% static 'main/images/home.png' %}" alt="home">
                             <img class="colored" src="{% static 'main/images/home_colored.png' %}" alt="home">
                             <p>Home</p>
                         </div>
@@ -80,7 +79,8 @@
                 <a href="#">
                     <li>
                         <div>
-                            <img src="{% static 'main/images/explore.png' %}" alt="explore">
+                            <img class="filled" src="{% static 'main/images/explore_filled.png' %}" alt="explore">
+                            <img class="black" src="{% static 'main/images/explore.png' %}" alt="explore">
                             <img class="colored" src="{% static 'main/images/explore_colored.png' %}" alt="explore">
                             <p>Explore</p>
                         </div>
@@ -89,7 +89,9 @@
                 <a href="#">
                     <li>
                         <div>
-                            <img src="{% static 'main/images/notifications.png' %}" alt="notifications">
+                            <img class="filled" src="{% static 'main/images/notifications_filled.png' %}"
+                                alt="notifications">
+                            <img class="black" src="{% static 'main/images/notifications.png' %}" alt="notifications">
                             <img class="colored" src="{% static 'main/images/notifications_colored.png' %}"
                                 alt="notifications">
                             <p>Notifications</p>
@@ -99,7 +101,8 @@
                 <a href="#">
                     <li>
                         <div>
-                            <img src="{% static 'main/images/messages.png' %}" alt="Messages">
+                            <img class="filled" src="{% static 'main/images/messages_filled.png' %}" alt="Messages">
+                            <img class="black" src="{% static 'main/images/messages.png' %}" alt="Messages">
                             <img class="colored" src="{% static 'main/images/messages_colored.png' %}" alt="Messages">
                             <p>Messages</p>
                         </div>
@@ -108,7 +111,8 @@
                 <a href="#">
                     <li>
                         <div>
-                            <img src="{% static 'main/images/bookmarks.png' %}" alt="Bookmarks">
+                            <img class="filled" src="{% static 'main/images/bookmarks_filled.png' %}" alt="Bookmarks">
+                            <img class="black" src="{% static 'main/images/bookmarks.png' %}" alt="Bookmarks">
                             <img class="colored" src="{% static 'main/images/bookmarks_colored.png' %}" alt="Bookmarks">
                             <p>Bookmarks</p>
                         </div>
@@ -117,7 +121,8 @@
                 <a href="#">
                     <li>
                         <div>
-                            <img src="{% static 'main/images/lists.png' %}" alt="Lists">
+                            <img class="filled" src="{% static 'main/images/lists_filled.png' %}" alt="Lists">
+                            <img class="black" src="{% static 'main/images/lists.png' %}" alt="Lists">
                             <img class="colored" src="{% static 'main/images/lists_colored.png' %}" alt="Lists">
                             <p>Lists</p>
                         </div>
@@ -132,10 +137,11 @@
                     </li>
                 </a>
                 {% if user.username == 'admin' %}
-                <a href="/admin">
+                <a href="/admin/">
                     <li>
                         <div>
-                            <img src="{% static 'main/images/admin.png' %}" alt="Admin">
+                            <img class="filled" src="{% static 'main/images/admin_filled.png' %}" alt="Admin">
+                            <img class="black" src="{% static 'main/images/admin.png' %}" alt="Admin">
                             <img class="colored" src="{% static 'main/images/admin_colored.png' %}" alt="Admin">
                             <p>Admin Page</p>
                         </div>

@@ -18,6 +18,8 @@ class Profile(models.Model):
                             null=True, validators=[letters])
     profile_img = models.ImageField(
         default='default_profile_pic.jpg', upload_to='profile_pics')
+    background_img = models.ImageField(
+        default='default_background_pic.jpg', upload_to='background_pics')
     description = models.TextField(blank=True, max_length=300)
     following = models.ManyToManyField(
         User, related_name='followers', blank=True)

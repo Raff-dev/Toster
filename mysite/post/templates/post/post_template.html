@@ -103,14 +103,18 @@
                     {% if post.author in user.following %}
                     <div class="option">
                         <div>
-                            <img src="{% static 'main/images/follow.png' %}" alt="follow">
-                            <p>Stop following @{{post.author}}</p>
+                            <div>
+                                <img src="{% static 'main/images/follow.png' %}" alt="follow">
+                            </div>
+                            <p>Follow @{{post.author}}</p>
                         </div>
                     </div>
                     {% else %}
                     <div class="option">
                         <div>
-                            <img src="{% static 'main/images/unfollow.png' %}" alt="unfollow">
+                            <div>
+                                <img src="{% static 'main/images/unfollow.png' %}" alt="unfollow">
+                            </div>
                             <p>Stop following @{{post.author}}</p>
                         </div>
                     </div>

@@ -1,7 +1,9 @@
 function toggleDropdown(post_id) {
     function outsideClickListener(event) {
         let condition1 = !$(event.target).parents('.options').length
-        let condition2 = $(event.target).parents('.dropdown').length
+        var condition2 = $(event.target).parents('#dropdown-' + post_id).length
+        console.log('condor her', $(event.target).parents('#dropdown-' + post_id))
+        console.log(post_id)
         if (condition1 || condition2) {
             dropdown.style.display = 'none';
             document.removeEventListener('click', outsideClickListener);
@@ -82,12 +84,15 @@ function postDetailRedirect(post_id) {
         }
     })
 }
-function scrollLoad(count, destination) {
-    window.addEventListener('scroll', function (e) {
-        let diff = document.getElementById('body').offsetHeight - (window.scrollY + window.innerHeight);
-        if (diff < document.getElementById('footer').offsetHeight) loadPosts(id_list, count, destination);
-        window.requestAnimationFrame(function () {
-        });
+function scrollLoad(id_list, count, destination_id) {
+    window.addEventListener('scroll', scrollListener.bind(null, id_list, count, destination_id));
+}
+function scrollListener(id_list, count, destination_id, event) {
+    let footer = document.getElementById('footer')
+    let body = document.getElementById('body')
+    let diff = body.offsetHeight - (window.scrollY + window.innerHeight);
+    if (diff < footer.offsetHeight) loadPosts(id_list, count, destination_id);
+    window.requestAnimationFrame(function () {
     });
 }
 function markLiked(post_id) {
@@ -247,7 +252,7 @@ function addListeners(post_id) {
     deletePostListener(post_id);
     commentPostListener(post_id)
     postDetailRedirect(post_id);
-    editlListener(post_id);
+    editPostlListener(post_id);
     editOnClick(post_id);
     toggleDropdown(post_id);
 }
@@ -305,7 +310,7 @@ function deletePostListener(post_id) {
         }
     }
 }
-function editlListener(post_id) {
+function editPostlListener(post_id) {
     $('#edit-' + post_id).on('click', function () {
         let url = 'post/api/post/' + post_id + '/'
         let method = 'patch'
@@ -358,5 +363,57 @@ function closeCommentModal() {
     })
 }
 
+function updateProfileListener() {
+    $(".profile-save-buton").on("click", function () {
+        event.preventDefault();
+        var form = $("#update-form");
+        var url = form.attr("url");
+        var formData = new FormData(this);
+        console.log($(formData).serialize())
+        $.ajax({
+            url: url,
+            method: 'post',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log("profile updated");
+                document.querySelector("#update-modal").style.display = 'none';
+            },
+            error: function (error) {
+                console.log("error: updating profile", error)
+            },
+        })
+    })
+}
+function toggleUpdateModal() {
+    let modal = $(".update-modal")
+    $(".profile-update").on("click", function () {
+        modal.css('display', 'flex')
+    })
+    $("#update-close").on('click', function () {
+        modal.css('display', 'none');
+    })
+}
+function switchProfileContent() {
+    let buttons = document.getElementsByClassName("switch-content")
+    for (const button of buttons) $(button).on('click', function (click, kek) {
+        let button = $(click.target).closest('.switch-content')
+        let div_id = button.attr('div')
+        let div = $("#" + div_id)
+        if (div.children().length) return
+        $('.posts').children().each((index, el) => {
+            $(el).empty()
+        })
+        $('.switch-content').removeClass('clicked')
+        button.toggleClass('clicked')
+        let url = div.attr('url')
+        let ids = apiRequest(url, 'get')
+        loadPosts(ids, 5, div_id)
+        window.removeEventListener("scroll", scrollListener)
+        scrollLoad(ids, 3, div_id)
+    })
+}
 const prepend = 0;
 const append = 1;

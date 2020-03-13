@@ -185,12 +185,19 @@
 .post .option:hover{
     background-color:rgba(23, 139, 228, .18) ;
 }
-.post .option div{
+.post .option > div{
     display: flex;
     padding: 15px;
     width: 100%;
     justify-self: left;
 }
+.post .option > div > div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    
 .post .option button{
     border: none;
     background-color: #fff0;
@@ -215,7 +222,7 @@
     border-width:1px;
     border-color: rgba(0,0, 0, .1);
     border-radius: 2%;
-    height: 300px;
+    height: 285px;
     width: 100%;
     margin-top: 5px;
     margin-top: 5px;
@@ -300,7 +307,7 @@
 .footer{
     grid-row-start: 3;
     grid-column-start: 2;
-    height: 100px;
+    height: 200vh;
 }
 .img-preview{
     display: none;

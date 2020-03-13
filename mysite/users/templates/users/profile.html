@@ -12,19 +12,76 @@
 
 
 {% block content %}
-<div class="profile-update-modal modal">
-    <div class="profile-update-modal-content modal-content">
-        <div class="profile-update-modal-close modal-close">+</div>
-        <form method="POST" class="profile-update-form" enctype="multipart/form-data"
-            action="{%url 'users:profile_update' profile.id%}" novalidate="">
-            {% csrf_token %}
-            {{update_form|crispy}}
-            <button type="submit" class="profile-update-save-button btn btn-primary">Save</button>
-        </form>
+<div class="update-modal">
+    <div class="modal-bg">
+        <div class="modal-content">
+            <div class="close-div hover-set" id="update-close">
+                <div class="close-button hover">
+                    <div class="x1"></div>
+                    <div class="x2"></div>
+                </div>
+            </div>
+            <div class="top">
+                <div class="background">
+                    <img src="{{profile.background_img.url}}" alt="background_img">
+
+                    <label for="background_img">
+                        <img src=" {% static 'main/images/image_input_white.png' %}" alt="image_input">
+                    </label>
+                    <input class="d-none" form="update-form" id="background_img" type="file" name="background_img"
+                        accept="image/*">
+                </div>
+
+                <div class="spacing">
+                    <div class="profile-img-div">
+                        <div class="modal-profile-img">
+                            <div class="modal-img-border">
+                                <img src="{{profile.profile_img.url}}" alt="profile_img">
+                            </div>
+                            <label for="profile_img">
+                                <img src=" {% static 'main/images/image_input_white.png' %}" alt="image_input">
+                            </label>
+                            <input class="d-none" form="update-form" id="profile_img" type="file" name="profile_img"
+                                accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="bot">
+                <form method="POST" url="{% url 'users:profile_update' profile.id %}" class="profile-update-form"
+                    id="update-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="input">
+                        <input type="text" name="alias" maxlength="50" id="alias" value={{profile.alias}}
+                            autocomplete="off">
+                        <label for="username">
+                            <span class="input-name">Name</span>
+                        </label>
+                    </div>
+
+                    <div class="input">
+                        <input type="text" name="description" maxlength="360" id="description"
+                            value={{profile.description}} autocomplete="off">
+                        <label for="username">
+                            <span class="input-name">Bio</span>
+                        </label>
+                    </div>
+                    <div class="save-div">
+                        <div class="save-button" id="profile-save-buton">
+                            <button>Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="background"></div>
+<div class="background">
+    <img src="{{profile.background_img.url}}" alt="background_img">
+</div>
 <div class="profile">
     <div class="profile-data">
         <div class="top">
@@ -112,28 +169,17 @@
     <div id="user-media" url="{% url 'api:user-media' profile.user.id %}"></div>
     <div id="user-likes" url="{% url 'api:user-likes' profile.user.id %}"></div>
 </div>
+<div id='footer' class="footer"></div>
 
 
 {% endblock content %}
 {% block script%}
 <script>
-    let buttons = document.getElementsByClassName("switch-content")
-    for (const button of buttons) $(button).on('click', function (click, kek) {
-        let button = $(click.target).closest('.switch-content')
-        let div_id = button.attr('div')
-        let div = $("#" + div_id)
-        if (div.children().length) return
-        $('.posts').children().each((index, el) => {
-            $(el).empty()
-        })
-        $('.switch-content').removeClass('clicked')
-        button.toggleClass('clicked')
-        let url = div.attr('url')
-        let ids = apiRequest(url, 'get')
-        loadPosts(ids, 5, div_id)
-    })
-    ProfileUpdateInfo()
+    switchProfileContent()
     imagePreviewListener(document.getElementById("prof-pic"))
     $('#user-posts-button').click()
+    toggleUpdateModal()
+    updateProfileListener()
+
 </script>
 {% endblock %}

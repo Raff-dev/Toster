@@ -24,7 +24,8 @@
     <div class="right">
         <div class="create-group">
             <form action="" id="create-form" enctype="multipart/form-data"></form>
-            <input id="create-input" form="create-form" class="create-input" type="text" name="content">
+            <input id="create-input" form="create-form" class="create-input" type="text" name="content"
+                autocomplete="off">
             <input class="d-none" form="create-form" type="text" name="parent" value="">
             <label for="content">
                 <span>What's on your mind?</span>
@@ -73,9 +74,6 @@
     createPostListener($("#create"), "create-form");
     togglePublishButton('create', "create-input")
     addImage('#post-img-input')
-    scrollLoad(3, 'posts')
-
-
-
+    scrollLoad(id_list, 3, 'posts')
 </script>
 {%endblock%}
