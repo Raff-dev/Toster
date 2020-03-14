@@ -6,6 +6,8 @@ from django.utils import timezone
 from post.models import Post
 from post.forms import PostForm
 from users.forms import UserRegisterForm
+from .models import Hashtag
+
 # Create your views here.
 
 
@@ -56,3 +58,15 @@ def home(request):
         }
         return render(request, 'main/home.html', context)
     return redirect('main:login')
+
+
+def hashtagView(request, *args, **kwargs):
+    hashtag_name = kwargs['hashtag']
+    hashtag = Hashtag.objects.filter(name=hashtag_name).first()
+    context = {'exists': False}
+    if hashtag:
+        context = {
+            'hashtag': hashtag,
+            'exists': True
+        }
+    return render(request, 'main/hashtag.html', context)

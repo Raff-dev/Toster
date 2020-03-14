@@ -11,12 +11,11 @@
     position: relative;
     display: flex;
     justify-content: flex-end;
-    pad
 }
 .profile .profile-data .profile-img{
     position: absolute;
-    width:fit-content;
-    top:-150px;
+    width: fit-content;
+    top: -150px;
     left: 0;
     height: fit-content;
     background-color: white;
@@ -159,14 +158,14 @@ background-color: #0003;
     border: 3px solid white;
     top: -80px;
 }
-.modal-profile-img{
+.profile_img{
     position: absolute;
     border-radius: 100%;
     overflow: hidden;
     width: 100%;
     height: 100%;
 }
-.modal-profile-img .modal-img-border img{
+.profile_img .modal-img-border img{
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -255,6 +254,7 @@ background-color: #0003;
     justify-content: center;
 }
 .save-button:hover{
+    cursor: pointer;
     background-color: rgb(42, 139, 214);
 }
 .save-button button{

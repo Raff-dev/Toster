@@ -1,0 +1,58 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load js %}
+{% block link%}
+{% endblock%}
+
+{% block content %}
+<div class="nav-bot p-0">
+    <div class="switch-content" id="top-button" div="hashtag-top">
+        <span>Top</span>
+    </div>
+
+    <div class="switch-content" id="latest-button" div="hashtag-latest">
+        <div class="span">
+            <span>Latest</span>
+        </div>
+    </div>
+
+    <div class="switch-content" id="people-button" div="hashtag-people">
+        <div class="span">
+            <span>People</span>
+        </div>
+    </div>
+
+    <div class="switch-content" id="photos-likes-button" div="hashtag-photos">
+        <div class="span">
+            <span>Photos</span>
+        </div>
+    </div>
+</div>
+
+{% if exists %}
+<div class="posts">
+    <div id="hashtag-top" url="{% url 'api:hashtag-top' hashtag.name %}"></div>
+    <div id="hashtag-latest" url="{% url 'api:hashtag-latest' hashtag.name %}"></div>
+    <div id="hashtag-people" url="{% url 'api:hashtag-people' hashtag.name %}"></div>
+    <div id="hashtag-photos" url="{% url 'api:hashtag-photos' hashtag.name %}"></div>
+</div>
+{% else %}
+<div class="no-hashtag">
+    <span>There are no posts with this hashtag</span>
+</div>
+{% endif %}
+<div id='footer' class="footer"></div>
+
+
+{% endblock%}
+
+
+{% block script%}
+<script>
+
+
+</script>
+
+
+{% endblock%}

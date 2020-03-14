@@ -1,11 +1,10 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
-# Create your models here.
+from django.core.validators import RegexValidator
 
 
 class Profile(models.Model):
-    from django.core.validators import RegexValidator
     alphanumeric = RegexValidator(
         r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
     letters = RegexValidator(r'^[a-zA-Z ]*$', 'Only letters are allowed.')

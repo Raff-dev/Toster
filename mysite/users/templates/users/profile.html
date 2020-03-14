@@ -23,25 +23,24 @@
             </div>
             <div class="top">
                 <div class="background">
-                    <img src="{{profile.background_img.url}}" alt="background_img">
+                    <img id="background_img" src="{{profile.background_img.url}}" alt="background_img">
 
-                    <label for="background_img">
+                    <label for="background-img-input">
                         <img src=" {% static 'main/images/image_input_white.png' %}" alt="image_input">
                     </label>
-                    <input class="d-none" form="update-form" id="background_img" type="file" name="background_img"
-                        accept="image/*">
+                    <input class="d-none" id="background-img-input" type="file" name="background_img" accept="image/*">
                 </div>
 
                 <div class="spacing">
                     <div class="profile-img-div">
-                        <div class="modal-profile-img">
+                        <div class="profile_img">
                             <div class="modal-img-border">
-                                <img src="{{profile.profile_img.url}}" alt="profile_img">
+                                <img id="profile_img" src="{{profile.profile_img.url}}" alt="profile_img">
                             </div>
-                            <label for="profile_img">
+                            <label for="profile-img-input">
                                 <img src=" {% static 'main/images/image_input_white.png' %}" alt="image_input">
                             </label>
-                            <input class="d-none" form="update-form" id="profile_img" type="file" name="profile_img"
+                            <input class="d-none" id="profile-img-input" type="file" name="profile_img"
                                 accept="image/*">
                         </div>
                     </div>
@@ -50,20 +49,19 @@
 
             </div>
             <div class="bot">
-                <form method="POST" url="{% url 'users:profile_update' profile.id %}" class="profile-update-form"
+                <form method="PATCH" url="{% url 'api:profile-detail' profile.id %}" class="profile-update-form"
                     id="update-form" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="input">
-                        <input type="text" name="alias" maxlength="50" id="alias" value={{profile.alias}}
-                            autocomplete="off">
+                        <input type="text" form="update-form" name="alias" maxlength="50" id="alias" autocomplete="off">
                         <label for="username">
                             <span class="input-name">Name</span>
                         </label>
                     </div>
 
                     <div class="input">
-                        <input type="text" name="description" maxlength="360" id="description"
-                            value={{profile.description}} autocomplete="off">
+                        <input type="text" form="update-form" name="description" maxlength="360" id="description"
+                            autocomplete="off">
                         <label for="username">
                             <span class="input-name">Bio</span>
                         </label>
@@ -109,7 +107,7 @@
             <div class="info">
                 <div class="name">
                     <div class="alias">
-                        <p>{{profile.alias}}</p>
+                        <p id='alias-text'>{{profile.alias}}</p>
                     </div>
 
                     <div class="username">
@@ -118,7 +116,7 @@
                 </div>
 
                 <div class="bio">
-                    <p>{{profile.description}}</p>
+                    <p id='description-text'>{{profile.description}}</p>
                 </div>
                 <div class="joined">
                     <p>Joined {{post.author.profile.join_timestamp}}</p>
@@ -175,11 +173,19 @@
 {% endblock content %}
 {% block script%}
 <script>
+    var profile_imgs = {
+        'profile_img': null,
+        'background_img': null
+    }
     switchProfileContent()
     imagePreviewListener(document.getElementById("prof-pic"))
     $('#user-posts-button').click()
     toggleUpdateModal()
     updateProfileListener()
+    loadProfileImg({
+        'profile-img-input': 'profile_img',
+        'background-img-input': 'background_img'
+    })
 
 </script>
 {% endblock %}

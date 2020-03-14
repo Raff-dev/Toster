@@ -1,17 +1,21 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import authentication, permissions, viewsets
+from rest_framework import authentication, permissions
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.decorators import action
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from .serializers import PostSerializer, UsersSerializer
+from .serializers import PostSerializer, UsersSerializer, ProfileSerializer
 from post.models import Post, PostImage
+from main.models import Hashtag
+from users.models import Profile
 
 
-class PostViewSet(viewsets.GenericViewSet):
+class PostViewSet(GenericViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     #permission_classes = {permissions.IsAuthenticated}
@@ -51,6 +55,15 @@ class PostViewSet(viewsets.GenericViewSet):
             new_post.save()
             parent.comments.add(new_post)
             parent.save()
+
+        if 'hashtags' in data.keys():
+            for hashtag_name in data['hashtags']:
+                hashtag = Hashtag.objects.get(name=hashtag_name)
+                if not hashtag.count():
+                    hashtag = Hashtag(name=hashtag_name)
+                hashtag.posts.add(new_post)
+                hashtag.save()
+
         return Response(serializer.data)
 
     @action(methods=['post', 'get'], detail=True)
@@ -95,7 +108,7 @@ class PostViewSet(viewsets.GenericViewSet):
         return Response(True)
 
 
-class UsersViewSet(viewsets.GenericViewSet):
+class UsersViewSet(GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UsersSerializer
 
@@ -125,3 +138,32 @@ class UsersViewSet(viewsets.GenericViewSet):
         posts = Post.objects.filter(author=instance).exclude(
             images=None).order_by('-timestamp')
         return Response([post.id for post in posts])
+
+
+class ProfileViewSet(GenericViewSet, UpdateModelMixin):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    authentication_classes = (authentication.TokenAuthentication,)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        print('POST', request.POST)
+        return self.update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()

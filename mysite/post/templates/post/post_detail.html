@@ -13,7 +13,7 @@
 <div class="post-detail">
     {% include 'post/post_template.html' with post=post comments=comments user=user %}
 </div>
-<div id="comments" post_id={{post.id}} class="posts" url="{% url 'api:post-comments-ids' post.id%}">
+<div class="posts" id="comments" post_id={{post.id}} url="{% url 'api:post-comments-ids' post.id%}">
 
 
 </div>

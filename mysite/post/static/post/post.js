@@ -111,14 +111,21 @@ function toggleLikeIcon(el, isliked) {
         el.siblings('p').css('color', 'black')
     }
 }
-function markHref(post_id) {
+function markHrefAndTags(post_id) {
     var content;
     var urlRegex = /(https?:\/\/[^\s]+)/g;
-    if ((content = document.getElementById("content2-" + post_id)) != null);
-    else if ((content = document.getElementById("content-" + post_id)) != null);
+    var hashtagRegex = /(^[#]|[\s][#])[a-zA-z_]*[a-zA-z]+[a-zA-z_]*/g;
+    var cleanHashtagRegex = /[\s]*/g;
+    var cleantagRegex = /[\s]*[#]/g;
+    if ((content = document.getElementById("content-" + post_id)) != null);
     else console.log('Can not find post with id:', post_id)
     content.innerHTML = content.innerHTML.replace(urlRegex, function (url) {
         return '<a href="' + url + '">' + url + '</a>';
+    })
+    content.innerHTML = content.innerHTML.replace(hashtagRegex, function (hashtag) {
+        cleanHashtag = hashtag.replace(cleanHashtagRegex, '')
+        cleanTag = cleanHashtag.replace(cleantagRegex, '')
+        return ' <a href="' + '/hashtag/' + cleanTag + '">' + cleanHashtag + '</a>';
     })
 }
 function setLikeText(obj, newVal) {
@@ -165,7 +172,7 @@ function appendPost(node, mode, post_id) {
         $(post).slideDown("fast")
         addListeners(post_id);
         markLiked(post_id);
-        markHref(post_id);
+        markHrefAndTags(post_id);
         $(post).find('.image').each((index, elem) => {
             imagePreviewListener(elem)
         })
@@ -215,7 +222,7 @@ function postUpdated(post_id) {
     if (content.attr('comment') == 'yes');
     // document.getElementById("content-" + post_id).prepend(authorHref);
     closeEdit(post_id);
-    markHref(post_id);
+    markHrefAndTags(post_id);
 }
 //-----------------------
 function apiRequest(url, method, data = null) {
@@ -362,29 +369,45 @@ function closeCommentModal() {
         }
     })
 }
-
-function updateProfileListener() {
-    $(".profile-save-buton").on("click", function () {
-        event.preventDefault();
-        var form = $("#update-form");
-        var url = form.attr("url");
-        var formData = new FormData(this);
-        console.log($(formData).serialize())
-        $.ajax({
-            url: url,
-            method: 'post',
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-                console.log("profile updated");
-                document.querySelector("#update-modal").style.display = 'none';
-            },
-            error: function (error) {
-                console.log("error: updating profile", error)
-            },
+function loadProfileImg(ids) {
+    $.each(ids, (input, img_id) => {
+        console.log('id val', input, img_id)
+        console.log('', input, img_id)
+        $('#' + input).on('change', function () {
+            console.log('files', this.files)
+            if (this.files && this.files[0]) {
+                profile_imgs[img_id] = this.files[0]
+                console.log('imgs', profile_imgs)
+                var reader = new FileReader();
+                reader.onload = event => {
+                    console.log('huj', $("#" + img_id).attr('src'))
+                    $("#" + img_id).attr('src', event.target.result)
+                }
+                reader.readAsDataURL(this.files[0]);
+            }
         })
+    })
+}
+function updateProfileListener() {
+    let alias = $('#alias-text').text()
+    let description = $('#description-text').text()
+    $('#alias').attr('value', alias)
+    $('#description').attr('value', description)
+    $("#profile-save-buton").on("click", function () {
+        event.preventDefault();
+        var form = document.getElementById("update-form")
+        console.log('thisform', form)
+        var formData = new FormData(form);
+        var url = $(form).attr("url");
+        var method = 'PATCH'
+        $.each(profile_imgs, (key, value) => {
+            console.log(key, value)
+            if (value) formData.append(key, value)
+        })
+        formData.append('csrfmiddlewaretoken', csrf_token)
+        console.log('serialized', $(form).serializeArray())
+        let result = apiRequest(url, method, formData)
+        if (result) location.reload()
     })
 }
 function toggleUpdateModal() {
