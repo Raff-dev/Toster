@@ -1,3 +1,21 @@
+function saveToken() {
+    $('.login-button').on('click', function () {
+        var form = document.getElementById('login-form')
+        var formData = new FormData(form)
+        let url = '/token/'
+        let response = apiRequest(url, 'POST', formData)
+        console.log('response', response['token'])
+        if (response) {
+            let token = response['token']
+            localStorage.setItem('token', token)
+        }
+    })
+}
+function clearSessionStorage() {
+    $('#logout').on('click', function () {
+        localStorage.clear()
+    })
+}
 function toggleDropdown(post_id) {
     function outsideClickListener(event) {
         let condition1 = !$(event.target).parents('.options').length
@@ -78,7 +96,8 @@ function postDetailRedirect(post_id) {
         let c4 = $(e.target).parents('.options').length
         let c5 = $(e.target).parents('.post-images').length
         let c6 = $(e.target).parents('.img').length
-        if (!c1 && !c2 && !c3 && !c4 && !c5 && !c6) {
+        let c7 = $(e.target).parents('.profile-follow').length
+        if (!c1 && !c2 && !c3 && !c4 && !c5 && !c6 && !c7) {
             let post = $(this).parent('.post').prevObject.get(0)
             window.location.replace($(post).attr("href"));
         }
@@ -111,21 +130,31 @@ function toggleLikeIcon(el, isliked) {
         el.siblings('p').css('color', 'black')
     }
 }
-function markHrefAndTags(post_id) {
+function markHrefAndTags(content) {
     var content;
     var urlRegex = /(https?:\/\/[^\s]+)/g;
-    var hashtagRegex = /(^[#]|[\s][#])[a-zA-z_]*[a-zA-z]+[a-zA-z_]*/g;
+    var hashtagRegex = /(^[#]|[\s][#])[a-zA-z_0-9]*[a-zA-z]+[a-zA-z_0-9]*/g;
+    var nametagRegex = /(^[@]|[\s][@])[a-zA-z_0-9]+/g;
     var cleanHashtagRegex = /[\s]*/g;
-    var cleantagRegex = /[\s]*[#]/g;
-    if ((content = document.getElementById("content-" + post_id)) != null);
-    else console.log('Can not find post with id:', post_id)
+    var cleanNametagRegex = /[\s]*/g;
+    var NohashRegex = /[\s]*[#]/g;
+    var NoAtRegex = /[\s]*[@]/g;
     content.innerHTML = content.innerHTML.replace(urlRegex, function (url) {
         return '<a href="' + url + '">' + url + '</a>';
     })
     content.innerHTML = content.innerHTML.replace(hashtagRegex, function (hashtag) {
         cleanHashtag = hashtag.replace(cleanHashtagRegex, '')
-        cleanTag = cleanHashtag.replace(cleantagRegex, '')
+        cleanTag = cleanHashtag.replace(NohashRegex, '')
         return ' <a href="' + '/hashtag/' + cleanTag + '">' + cleanHashtag + '</a>';
+    })
+    content.innerHTML = content.innerHTML.replace(nametagRegex, function (nametag) {
+        cleanNametag = nametag.replace(cleanNametagRegex, '')
+        cleanTag = cleanNametag.replace(NoAtRegex, '')
+        let url = '/api/users/' + cleanTag + '/get/'
+        if (apiRequest(url, 'GET'))
+            return ' <a href="' + '/profile/' + cleanTag + '">' + cleanNametag + '</a>';
+        else
+            return content.innerHTML
     })
 }
 function setLikeText(obj, newVal) {
@@ -172,7 +201,8 @@ function appendPost(node, mode, post_id) {
         $(post).slideDown("fast")
         addListeners(post_id);
         markLiked(post_id);
-        markHrefAndTags(post_id);
+        let content = document.getElementById("content-" + post_id)
+        markHrefAndTags(content);
         $(post).find('.image').each((index, elem) => {
             imagePreviewListener(elem)
         })
@@ -215,23 +245,22 @@ function postDeleted(post_id) {
 function postUpdated(post_id) {
     let authorHref = document.getElementById('at-author-' + post_id)
     var text = document.getElementById("input-" + post_id).value;
-    $(document.getElementById("content1-" + post_id)).text(text);
-    $(document.getElementById("content2-" + post_id)).text(text);
     let content = $(document.getElementById("content-" + post_id))
     $(document.getElementById("content-" + post_id)).text(' ' + text);
     if (content.attr('comment') == 'yes');
     // document.getElementById("content-" + post_id).prepend(authorHref);
     closeEdit(post_id);
-    markHrefAndTags(post_id);
+    markHrefAndTags(content);
 }
 //-----------------------
-function apiRequest(url, method, data = null) {
-    console.log('url', url, 'data', data)
+function apiRequest(url, method, data = null, headers = {}) {
     var result = NaN;
     let contentType = false
     let processData = false
     if (data == null) {
-        data = { "csrfmiddlewaretoken": csrf_token }
+        data = {
+            "csrfmiddlewaretoken": csrf_token,
+        }
         contentType = 'application/x-www-form-urlencoded; charset=UTF-8'
         processData = true
     }
@@ -240,6 +269,7 @@ function apiRequest(url, method, data = null) {
         method: method,
         async: false,
         data: data,
+        headers: { 'Authorization': 'Token ' + localStorage.getItem('token') },
         cache: false,
         processData: processData,
         contentType: contentType,
@@ -256,6 +286,7 @@ function apiRequest(url, method, data = null) {
 }
 function addListeners(post_id) {
     likePostListener(post_id);
+    followPostListener(post_id);
     deletePostListener(post_id);
     commentPostListener(post_id)
     postDetailRedirect(post_id);
@@ -271,6 +302,17 @@ function likePostListener(post_id) {
         postLiked(post_id, result['liked'])
     })
 }
+function followPostListener(post_id) {
+    let follow_btn = $('#follow-' + post_id)
+    follow_btn.on('click', function () {
+        let url = $(this).attr('url')
+        let method = 'POST'
+        let result = apiRequest(url, method)
+        if (result) {
+            follow_btn.toggleClass('unfollow')
+        }
+    })
+}
 function createPostListener(button, form_id, iscomment = false) {
     button.on('click', function () {
         var form = document.getElementById(form_id)
@@ -280,6 +322,9 @@ function createPostListener(button, form_id, iscomment = false) {
         if (iscomment) files = comment_create_files
         else files = post_create_files
         var formData = new FormData(form)
+        console.log('data', $(form).serializeArray())
+        console.log('url', url)
+        console.log('method', method)
         $(files).each((index) => {
             formData.append('img' + index, files[index])
         })

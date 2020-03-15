@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404
 from django.views.generic import (
     DetailView, CreateView, ListView, FormView, DeleteView, UpdateView)
+from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -12,18 +14,16 @@ from .models import Profile
 from post.models import Post
 
 
-class ProfileView(DetailView):
-    model = Profile
-    template_name = 'users/profile.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ProfileView, self).get_context_data(**kwargs)
-        profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
-        user = get_object_or_404(User, profile=profile)
-        context['posts'] = Post.objects.filter(
-            author=user).order_by('-timestamp')[:5]
-        context['update_form'] = ProfileUpdateForm
-        return context
+def profileView(request, *args, **kwargs):
+    username = kwargs['username']
+    user = User.objects.filter(username=username).first()
+    context = {'exists': False}
+    if user:
+        profile = user.profile
+        context['username'] = username
+        context['profile'] = profile
+        context['exists'] = True
+    return render(request, 'users/profile.html', context)
 
 
 class ProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -41,7 +41,6 @@ class ProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         profile = self.get_object()
         user = self.request.user
-        print('//--------------------------------------------------------------------------------')
         print('request.POST:', self.request.POST)
         print('request.FILES:', self.request.FILES)
         return User.is_authenticated and profile.user == user

@@ -8,6 +8,8 @@ from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.http import Http404
+
 
 from .serializers import PostSerializer, UsersSerializer, ProfileSerializer
 from post.models import Post, PostImage
@@ -18,7 +20,6 @@ from users.models import Profile
 class PostViewSet(GenericViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    #permission_classes = {permissions.IsAuthenticated}
     #authentication_classes = (authentication.TokenAuthentication,)
 
     def get_permissions(self):
@@ -111,6 +112,7 @@ class PostViewSet(GenericViewSet):
 class UsersViewSet(GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UsersSerializer
+    lookup_field = 'username'
 
     @action(methods=['get'], detail=True)
     def posts(self, request, format=None, *args, **kwargs):
@@ -139,31 +141,37 @@ class UsersViewSet(GenericViewSet):
             images=None).order_by('-timestamp')
         return Response([post.id for post in posts])
 
+    @action(methods=['get'], detail=True)
+    def get(self, request, format=None, *args, **kwargs):
+        try:
+            self.get_object()
+        except Http404:
+            return Response(False)
+        return Response(True)
+
 
 class ProfileViewSet(GenericViewSet, UpdateModelMixin):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication, ]
 
-    def partial_update(self, request, *args, **kwargs):
-        kwargs['partial'] = True
-        print('POST', request.POST)
-        return self.update(request, *args, **kwargs)
+    @action(methods=['post', 'get'], detail=True)
+    def follow(self, request, format=None, *args, **kwargs):
+        """
+        method used to toggle follow attribute of a profile
+        """
+        target_profile = get_object_or_404(Profile, pk=self.kwargs.get('pk'))
+        print('PRINT', request.POST)
+        user = request.user
+        print('PRINT', request, user, target_profile)
 
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        serializer.save()
+        if request.method == 'POST':
+            if target_profile in user.profile.following.all():
+                user.profile.following.remove(target_profile)
+                followed = False
+            else:
+                user.profile.following.add(target_profile)
+                followed = True
+            return Response({'followed': followed, 'id': user.profile.id})
+        return Response(target_profile in user.profile.following.all())

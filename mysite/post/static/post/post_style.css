@@ -35,7 +35,6 @@
 }
 
 .post .nav-top{
-    
     height: fit-content;
     width: 100%;
     font-weight: bold;
@@ -52,14 +51,14 @@
     color: rgba(0,0, 0, .8);
     padding-right: 5px;
 }
-.post .nav-top .info .alias:hover ~.profile-snippet{
+.nav-top .alias:hover ~.profile-snippet{
     visibility: visible;
     opacity: 1;
 }
-.post .nav-top .info .alias:hover{
+.nav-top .info .alias:hover{
     text-decoration: underline;
 }
-.post .profile-snippet{
+.profile-snippet{
     position: absolute;
     z-index: 5;
     visibility: hidden;
@@ -74,51 +73,53 @@
     transition: .15s ease-in;
     transition-delay: .5s;
 }
-.post .profile-snippet:hover{
+.profile-snippet:hover{
     visibility: visible;
     opacity: 1;
 }
-.post .profile-snippet .top{
+.profile-snippet .top{
     display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-.post .profile-snippet .profile-img{
+
+.profile-snippet .profile-img{
     position: relative;
     top: 0;
 }
-.post .profile-snippet img{
+.profile-snippet img{
     width: 60px;
     height: 60px;
     margin: 2px;
 }
-.post .profile-data .snippet-info{
+.profile-data .snippet-info{
     font-weight: 500;
     font-size: 16px;
     color: rgba(40, 52, 105, 0.7);
 }
-.post .profile-data .snippet-info > div{
+.profile-data .snippet-info > div{
     margin-bottom: 4px;
 }
-.post .profile-data .snippet-info .name{
+.profile-data .snippet-info .name{
     padding-bottom: 4px;
 }
-.post .snippet-info a{
+.snippet-info a{
     color: unset;
 
 }
-.post .snippet-info .alias{
+.snippet-info .alias{
     color: rgba(0, 0, 0, 0.8);
     font-weight: 700;
 }
-.post .snippet-info .alias:hover{
+.snippet-info .alias:hover{
     text-decoration: underline;
 }
-.post .username{
+.username{
     color: rgba(0,0, 0, .5);
     margin: 0;
 }
-.post .timestamp{
+.timestamp{
     color: rgba(0,0, 0, .7);
-
 }
 
 .profile-data .follow{
@@ -147,34 +148,34 @@
     margin-left: 2px;
     margin-right: 2px;
 }
-.post .options{
+.options{
     transition: all 0.3s ease-out;
     position: relative;
     padding: 5px;
     right: 0px;
     display: flex;
 }
-.post .options .dots{
+.options .dots{
     display: flex;
     cursor: pointer;
     padding-top: 5px;
     padding-bottom: 5px;
 }
-.post .options .dots div{
+.options .dots div{
     width: 4px;
     height: 4px;
     margin: 1.5px;
     border-radius: 50%;
     background-color: rgb(153, 153, 153);
 }
-.post .options{
+.options{
     padding: 4px;
 }
-.post .options:hover{
+.options:hover{
     border-radius: 25px;
     background-color:rgba(23, 139, 228, .18) ;
 }
-.post .options .dropdown{
+.options .dropdown{
     filter: drop-shadow(1px 1px 6px rgba(0,0,0,.12));
     border-radius: 2px;
     position: absolute;
@@ -185,37 +186,37 @@
     width: 15rem;
     overflow: hidden;
 }
-.post .option{
+.option{
     align-items: center;
     transition: 0.2s ease-in;
 }
-.post .option:hover{
+.option:hover{
     background-color:rgba(23, 139, 228, .18) ;
 }
-.post .option > div{
+.option > div{
     display: flex;
     padding: 15px;
     width: 100%;
     justify-self: left;
 }
-.post .option > div > div{
+.option > div > div{
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
     
-.post .option button{
+.option button{
     border: none;
     background-color: #fff0;
 }
-.post .option img{
+.option img{
     background-color: #fff0;
     margin-right: 10px;
     width: 20px ;
     height: 20px;
 }
-.post .options p{
+.options p{
     width: 100%;
 }
 .content p, .content a  {

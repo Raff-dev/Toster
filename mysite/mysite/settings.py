@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     # trird party
     'rest_framework',
+    'rest_framework.authtoken',
     'crispy_forms',
     # local apps
     'api.apps.ApiConfig',
@@ -136,6 +137,14 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 LOGIN_REDIRECT_URL = 'main:home'
 LOGOUT_REDIRECT_URL = 'main:main'

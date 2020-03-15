@@ -14,8 +14,9 @@ class PostSerializer(serializers.ModelSerializer):
 class UsersSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Post
+        model = User
         fields = '__all__'
+        lookup_field = 'username'
 
 
 class ProfileSerializer(serializers.ModelSerializer):

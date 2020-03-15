@@ -1,17 +1,209 @@
 {% extends 'main/base.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
 {% load humanize %}
 {% load js %}
 {% block link%}
-
-
 {% endblock%}
 
 {% block content %}
 
-<div class="post-detail">
-    {% include 'post/post_template.html' with post=post comments=comments user=user %}
+<div class="post-detail d-block">
+    <nav class="nav-top d-flex ">
+        <div class="left d-flex">
+            <div class="img-div">
+                <div class="profile-img mr-2">
+                    <a href="{%url 'users:profile' post.author.username %}">
+                        <img src="{{post.author.profile.profile_img.url}}" alt="{{post.author.username}}">
+                    </a>
+                </div>
+            </div>
+
+            <div class="username-div">
+                <a class="alias" href="{%url 'users:profile' post.author.username %}">{{post.author.profile.alias}}</a>
+                <p class="username">@{{post.author}}</p>
+                <div class="profile-snippet">
+                    <div class="profile-data">
+                        <div class="top">
+                            <div class="profile-img">
+                                <img id='prof-pic' src="{{post.author.profile.profile_img.url}}" alt="profile_img">
+                            </div>
+                            {% if post.author != user and user.is_authenticated %}
+                            <div id="follow-{{post.id}}" class="profile-follow"
+                                url="{% url 'api:profile-follow' post.author.profile.id %}">
+                                <button>
+                                    <p>Follow</p>
+                                </button>
+                            </div>
+                            {%endif%}
+                        </div>
+
+                        <div class="bot">
+                            <div class="snippet-info">
+                                <div class="name">
+                                    <div class="alias">
+                                        <a href="{%url 'users:profile' post.author.username %}">
+                                            <p>{{post.author.profile.alias}}</p>
+                                        </a>
+                                    </div>
+                                    <div class="username">
+                                        <p>@{{post.author.username}}</p>
+                                    </div>
+                                </div>
+                                <div class="bio">
+                                    <p>{{post.author.profile.description}}</p>
+                                </div>
+
+                                <div class="follow">
+                                    <div class="following">
+                                        <p>Following</p>
+                                        <p class="count">{{post.author.profile.following.count}}</p>
+                                    </div>
+                                    <div class="followers">
+                                        <p>Followers</p>
+                                        <p class="count"> {{post.author.profile.followers.count}}</p>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="options " id="options-{{post.id}}">
+            <div class="dots">
+                <div class=" dot1"></div>
+                <div class="dot2"></div>
+                <div class="dot3"></div>
+            </div>
+
+            <div class="dropdown hover" id="dropdown-{{post.id}}">
+                {% if user == post.author %}
+                <div class="delete option" id='delete-{{post.id}}' url="{% url 'api:post-delete' post.id %}"
+                    post_id={{post.id}}>
+                    <div>
+                        <img src="{% static 'main/images/delete.png' %}" alt="delete">
+                        <p>Delete</p>
+                    </div>
+                </div>
+                <div class="option edit" id="edit-{{post.id}}" url="{% url 'api:post-list' post.id %}"
+                    post_id={{post.id}} method="POST">
+                    <div>
+                        <img src="{% static 'main/images/edit.png' %}" alt="edit" form="edit-form-{{post.id}}">
+                        <p>Edit</p>
+                    </div>
+                </div>
+                <div class="option">
+                    <div>
+                        <img src="{% static 'main/images/pin.png' %}" alt="pin">
+                        <p>Pin to your profile</p>
+                    </div>
+                </div>
+                {% else %}
+                {% if post.author in user.profile.following %}
+                <div class="option">
+                    <div>
+                        <div>
+                            <img src="{% static 'main/images/follow.png' %}" alt="follow">
+                        </div>
+                        <p>Follow @{{post.author}}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="option">
+                    <div>
+                        <div>
+                            <img src="{% static 'main/images/unfollow.png' %}" alt="unfollow">
+                        </div>
+                        <p>Stop following @{{post.author}}</p>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="option">
+                    <div>
+                        <img src="{% static 'main/images/mute.png' %}" alt="mute">
+                        <p>Mute</p>
+                    </div>
+                </div>
+                <div class="option">
+                    <div>
+                        <img src="{% static 'main/images/block.png' %}" alt="block">
+                        <p>Block</p>
+                    </div>
+                </div>
+                <div class="option">
+                    <div>
+                        <img src="{% static 'main/images/report.png' %}" alt="report">
+                        <p>Report {{post.author}}</p>
+                    </div>
+                </div>
+                <div class="option">
+                    <div>
+                        <img src="{% static 'main/images/report.png' %}" alt="report">
+                        <p>Report post</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </nav>
+    <div class="bot">
+        <div class="content">
+            <div class="content" id="content-div-{{post.id}}">
+                <p id="content-{{post.id}}">{{post.content}}</p>
+            </div>
+            <div class="post-images">
+                {% for img in post.images.all %}
+                <div class="post-image">
+                    <img class="image" src="{{ img.image.url }}" alt="post_image">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="post-info">
+            <div class="timestamp-div py-3">
+                <p class="timestamp">{{post.timestamp|naturaltime}}</p>
+            </div>
+            <div class="like-comment-div d-flex">
+                <div class="likes-div d-flex py-2 pr-2">
+                    <p class="pr-2 count ">{{post.likes.count}}</p>
+                    <p>Likes</p>
+                </div>
+                <div class="comments-div d-flex p-2">
+                    <p class="pr-2 count">{{post.comments.all.count}}</p>
+                    <p>comments</p>
+                </div>
+
+            </div>
+
+        </div>
+        <nav class="nav-bot icon-set hover-set">
+            <div class="like-div">
+                <div class="like hover" id='like-{{post.id}}' method="POST" url="{%url 'api:post-like' post.id %}"
+                    likes-count="{{post.likes.count}}" post_id={{post.id}} liked='false'>
+                    <img src=" {% static 'main/images/like.png' %}" alt="like">
+                    <img class="colored" src="{% static 'main/images/like_colored.png' %}" alt="like_colored">
+                    <img class="liked" src="{% static 'main/images/like_liked.png' %}" alt="like_liked">
+                </div>
+            </div>
+
+            <div class="comment" id="comment-{{post.id}}"" url=" {% url 'post:comment_modal_template' post.id %}">
+                <div class="hover" id='comment-{{post.id}}' post_id={{post.id}}>
+                    <img src="{% static 'main/images/comment.png' %}" alt="comment">
+                    <img class="colored" src="{% static 'main/images/comment_colored.png' %}" alt="comment_colored">
+                </div>
+            </div>
+
+            <div class="share">
+                <div class="hover" id='share-{{post.id}}' post_id={{post.id}}>
+                    <img src="{% static 'main/images/share.png' %}" alt="share">
+                    <img class="colored" src="{% static 'main/images/share_colored.png' %}" alt="share_colored">
+                </div>
+            </div>
+        </nav>
+    </div>
 </div>
 <div class="posts" id="comments" post_id={{post.id}} url="{% url 'api:post-comments-ids' post.id%}">
 
@@ -27,10 +219,9 @@
     var id_list = apiRequest($('#comments').attr('url'), 'GET');
     console.log(id_list)
     loadPosts(id_list, 8, 'comments');
-    likePostListener(post_id);
-    deletePostListener(post_id);
-    commentPostListener(post_id)
+    addListeners(post_id)
     toggleDropdown(post_id);
+
 
 </script>
 

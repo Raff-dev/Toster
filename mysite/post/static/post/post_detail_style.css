@@ -1,0 +1,37 @@
+.post-detail{
+    padding: 15px;
+}
+.post-detail .nav-top{
+    justify-content: space-between;
+    align-items: center;
+    height: fit-content;
+
+}
+.post-detail .left{
+    margin:0;
+}
+.post-detail .alias{
+    font-size: 24px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.8);
+}
+.post-detail .timestamp{
+    font-size: 16px;
+}
+.post-detail .username{
+    font-size: 18px;
+
+}
+.post-detail .content{
+    font-size: 20px;
+
+}
+
+.post-detail .like-comment-div .count{
+    font-weight: 700;
+}
+.post-detail .profile-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -80,6 +80,7 @@
 <div class="background">
     <img src="{{profile.background_img.url}}" alt="background_img">
 </div>
+{% if exists %}
 <div class="profile">
     <div class="profile-data">
         <div class="top">
@@ -94,13 +95,13 @@
                     <p>Edit profile</p>
                 </Button>
             </div>
-            {%else%}
-            <div class="profile-follow">
+            {% elif user.is_authenticated %}
+            <div id="follow-" class="profile-follow" url="{% url 'api:profile-follow' profile.id %}">
                 <button>
                     <p>Follow</p>
                 </button>
             </div>
-            {%endif%}
+            {% endif %}
         </div>
 
         <div class="bot">
@@ -160,12 +161,16 @@
         </div>
     </div>
 </div>
-
+{% else %}
+<div class="no-profile">
+    <span>There is no user named {{username}}</span>
+</div>
+{% endif %}
 <div class="posts">
-    <div id="user-posts" url="{% url 'api:user-posts' profile.user.id %}"></div>
-    <div id="user-replies" url="{% url 'api:user-replies' profile.user.id %}"></div>
-    <div id="user-media" url="{% url 'api:user-media' profile.user.id %}"></div>
-    <div id="user-likes" url="{% url 'api:user-likes' profile.user.id %}"></div>
+    <div id="user-posts" url="{% url 'api:user-posts' profile.user.username %}"></div>
+    <div id="user-replies" url="{% url 'api:user-replies' profile.user.username %}"></div>
+    <div id="user-media" url="{% url 'api:user-media' profile.user.username %}"></div>
+    <div id="user-likes" url="{% url 'api:user-likes' profile.user.username %}"></div>
 </div>
 <div id='footer' class="footer"></div>
 
@@ -173,19 +178,23 @@
 {% endblock content %}
 {% block script%}
 <script>
-    var profile_imgs = {
-        'profile_img': null,
-        'background_img': null
+    if ($('.profile').length) {
+        var profile_imgs = {
+            'profile_img': null,
+            'background_img': null
+        }
+        switchProfileContent()
+        imagePreviewListener(document.getElementById("prof-pic"))
+        $('#user-posts-button').click()
+        toggleUpdateModal()
+        updateProfileListener()
+        followPostListener('')
+        loadProfileImg({
+            'profile-img-input': 'profile_img',
+            'background-img-input': 'background_img'
+        })
+        let description = document.getElementById('description-text')
+        markHrefAndTags(description)
     }
-    switchProfileContent()
-    imagePreviewListener(document.getElementById("prof-pic"))
-    $('#user-posts-button').click()
-    toggleUpdateModal()
-    updateProfileListener()
-    loadProfileImg({
-        'profile-img-input': 'profile_img',
-        'background-img-input': 'background_img'
-    })
-
 </script>
 {% endblock %}

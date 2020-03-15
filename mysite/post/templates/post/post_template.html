@@ -5,7 +5,7 @@
 <div class="post" id="post-{{post.id}}" href="{% url 'post:post_detail' post.id %}">
     <div class="left">
         <div class="profile-img">
-            <a href="{%url 'users:profile' post.author.profile.id %}">
+            <a href="{%url 'users:profile' post.author.username %}">
                 <img src="{{post.author.profile.profile_img.url}}" alt="{{post.author.username}}">
             </a>
         </div>
@@ -16,17 +16,18 @@
             <div class="info">
                 <div>
                     <a class="alias"
-                        href="{%url 'users:profile' post.author.profile.id %}">{{post.author.profile.alias}}</a>
+                        href="{%url 'users:profile' post.author.username %}">{{post.author.profile.alias}}</a>
                     <div class="profile-snippet">
                         <div class="profile-data">
                             <div class="top">
                                 <div class="profile-img">
                                     <img id='prof-pic' src="{{post.author.profile.profile_img.url}}" alt="profile_img">
                                 </div>
-                                {%if post.author != user %}
-                                <div class="profile-follow">
+                                {% if post.author != user and user.is_authenticated %}
+                                <div id="follow-{{post.id}}" class="profile-follow"
+                                    url="{% url 'api:profile-follow' post.author.profile.id %}">
                                     <button>
-                                        <p>Edit profile</p>
+                                        <p>Follow</p>
                                     </button>
                                 </div>
                                 {%endif%}
@@ -36,7 +37,7 @@
                                 <div class="snippet-info">
                                     <div class="name">
                                         <div class="alias">
-                                            <a href="{%url 'users:profile' post.author.profile.id %}">
+                                            <a href="{%url 'users:profile' post.author.username %}">
                                                 <p>{{post.author.profile.alias}}</p>
                                             </a>
                                         </div>
@@ -100,7 +101,7 @@
                         </div>
                     </div>
                     {% else %}
-                    {% if post.author in user.following %}
+                    {% if post.author in user.profile.following %}
                     <div class="option">
                         <div>
                             <div>
@@ -159,25 +160,6 @@
                 </div>
                 {% endfor %}
             </div>
-            {% if post.author == user %}
-
-            <div class="d-none edit-group" id="edit-group-{{post.id}}">
-                <form class="form-group edit-form" method="POST" post_id="{{post.id}}"
-                    action="{% url 'post:post_update' post.id %}" id="edit-form-{{post.id}}">
-                    {% csrf_token %}
-                    <input class="form-control " name="content" class="m-2" value="{{post.content}}" type="text"
-                        maxlength=" 300" required id="input-{{post.id}}"">
-                    <input name=" id" value="{{post.id}}" class="d-none">
-                    <div class="edit-form-button">
-                        <button type="submit" class="save-button btn btn-primary" post_id={{post.id}}
-                            id="save-button-{{post.id}}">
-                            Save
-                        </button>
-                    </div>
-                </form>
-            </div>
-            {%endif%}
-
         </div>
 
         <nav class="nav-bot icon-set hover-set">
@@ -206,5 +188,6 @@
                 </div>
                 <p>0</p>
             </div>
+        </nav>
     </div>
 </div>

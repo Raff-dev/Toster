@@ -14,7 +14,7 @@ class Post(models.Model):
     parent = models.ForeignKey(
         'self', related_name='comments', on_delete=models.CASCADE, null=True, blank=True)
     likes = models.ManyToManyField(
-        User, related_name='users', blank=True)
+        User, related_name='liked', blank=True)
 
     snippet_length = 350
 
@@ -46,3 +46,9 @@ class PostImage(models.Model):
     post = models.ForeignKey(
         Post, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='post_images')
+
+
+class Action(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='actions')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
