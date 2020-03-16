@@ -51,4 +51,5 @@ class PostImage(models.Model):
 class Action(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='actions')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name='actions')

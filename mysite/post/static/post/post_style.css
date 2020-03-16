@@ -1,7 +1,5 @@
 
 .posts{
-    grid-row-start: 2;
-    grid-column-start: 2;
     border-bottom: solid;
     border-bottom-width: 2px;
     border-color: rgba(111, 111, 111,0.3);
@@ -81,6 +79,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.profile-snippet button{
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .profile-snippet .profile-img{
@@ -220,7 +223,6 @@
     width: 100%;
 }
 .content p, .content a  {
-    word-break: break-all;
     margin-bottom: 0;
     
 }

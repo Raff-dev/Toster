@@ -26,6 +26,12 @@
     font-size: 20px;
 
 }
+.post-detail .colored{
+    position: absolute;
+}
+.post-detail .like,.post-detail .comment .hover ,.post-detail .share .hover{
+    display: flex;
+}
 
 .post-detail .like-comment-div .count{
     font-weight: 700;
@@ -34,4 +40,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.image:hover{
+    cursor: pointer;
 }

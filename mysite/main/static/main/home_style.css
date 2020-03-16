@@ -48,7 +48,7 @@
     justify-content: center;
     align-items: center;
     display: flex;
-    position: fixed;
+    position: absolute;
     right: 3%;
     top: 3%;
     transition: 0.2s ease-in;

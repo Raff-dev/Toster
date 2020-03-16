@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import authentication, permissions
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.decorators import action
@@ -9,9 +11,10 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.http import Http404
+from django.db.models import Count
 
 
-from .serializers import PostSerializer, UsersSerializer, ProfileSerializer
+from .serializers import PostSerializer, UsersSerializer, ProfileSerializer, HashtagSerializer
 from post.models import Post, PostImage
 from main.models import Hashtag
 from users.models import Profile
@@ -20,22 +23,10 @@ from users.models import Profile
 class PostViewSet(GenericViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    #authentication_classes = (authentication.TokenAuthentication,)
 
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view requires.
-        """
-        if self.action == 'a method':
-            permission_classes = [permissions.IsAuthenticated]
-        else:
-            permission_classes = []
-        return [permission() for permission in permission_classes]
-
+    @authentication_classes([TokenAuthentication])
+    @permission_classes([IsAuthenticated])
     def create(self, request, *args, **kwargs):
-        print('POST::', request.POST)
-        print('FILES::', request.FILES)
-
         data = request.data.copy()
         data['timestamp'] = timezone.now()
         data['author'] = self.request.user.id
@@ -58,16 +49,18 @@ class PostViewSet(GenericViewSet):
             parent.save()
 
         if 'hashtags' in data.keys():
-            for hashtag_name in data['hashtags']:
-                hashtag = Hashtag.objects.get(name=hashtag_name)
-                if not hashtag.count():
-                    hashtag = Hashtag(name=hashtag_name)
+            for hashtag_name in data['hashtags'].split(','):
+                hashtag = Hashtag.objects.filter(name=hashtag_name).first()
+                if not hashtag:
+                    hashtag = Hashtag.objects.create(name=hashtag_name)
                 hashtag.posts.add(new_post)
                 hashtag.save()
 
         return Response(serializer.data)
 
     @action(methods=['post', 'get'], detail=True)
+    @authentication_classes([TokenAuthentication])
+    @permission_classes([IsAuthenticated])
     def like(self, request, format=None, *args, **kwargs):
         """
         method used to toggle like attribute and check if a given post is liked
@@ -89,7 +82,8 @@ class PostViewSet(GenericViewSet):
         """
         return a list of comments ids
         """
-        comments = Post.objects.all().filter(parent=kwargs.get('pk'))
+        comments = Post.objects.all().filter(
+            parent=kwargs.get('pk')).order_by('-timestamp')
         return Response([comment.id for comment in comments])
 
     @action(methods=['get'], detail=False)
@@ -103,6 +97,8 @@ class PostViewSet(GenericViewSet):
         return Response(ids)
 
     @action(methods=['post'], detail=True)
+    @authentication_classes([TokenAuthentication])
+    @permission_classes([IsAuthenticated])
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
@@ -153,8 +149,8 @@ class UsersViewSet(GenericViewSet):
 class ProfileViewSet(GenericViewSet, UpdateModelMixin):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [authentication.TokenAuthentication, ]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     @action(methods=['post', 'get'], detail=True)
     def follow(self, request, format=None, *args, **kwargs):
@@ -175,3 +171,35 @@ class ProfileViewSet(GenericViewSet, UpdateModelMixin):
                 followed = True
             return Response({'followed': followed, 'id': user.profile.id})
         return Response(target_profile in user.profile.following.all())
+
+
+class HashtagViewSet(GenericViewSet):
+    queryset = Hashtag.objects.all()
+    serializer_class = HashtagSerializer
+    lookup_field = 'name'
+
+    @action(methods=['get'], detail=True)
+    def top(self, request, format=None, *args, **kwargs):
+        hashtag = self.get_object()
+        posts = hashtag.posts.all().annotate(
+            likes_count=Count('likes')).order_by('-likes_count')
+        return Response([post.id for post in posts])
+
+    @action(methods=['get'], detail=True)
+    def latest(self, request, format=None, *args, **kwargs):
+        hashtag = self.get_object()
+        posts = hashtag.posts.all().order_by('-timestamp')
+        return Response([post.id for post in posts])
+
+    @action(methods=['get'], detail=True)
+    def people(self, request, format=None, *args, **kwargs):
+        hashtag = self.get_object()
+        posts = hashtag.posts.all()
+        return Response([post.id for post in posts])
+
+    @action(methods=['get'], detail=True)
+    def photos(self, request, format=None, *args, **kwargs):
+        hashtag = self.get_object()
+        posts = hashtag.posts.all().exclude(
+            images=None).order_by('-timestamp')
+        return Response([post.id for post in posts])

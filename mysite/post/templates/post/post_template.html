@@ -170,7 +170,7 @@
                     <img class="colored" src="{% static 'main/images/like_colored.png' %}" alt="like_colored">
                     <img class="liked" src="{% static 'main/images/like_liked.png' %}" alt="like_liked">
                 </div>
-                <p>{{post.likes.count}}</p>
+                <p id='like-label-{{post.id}}'>{{post.likes.count}}</p>
             </div>
 
             <div class="comment" id="comment-{{post.id}}"" url=" {% url 'post:comment_modal_template' post.id %}">

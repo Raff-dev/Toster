@@ -6,7 +6,8 @@
 :root{
     /* overflow-x: hidden; */
 }
-body {
+
+body{
     position: relative;
     background-color: white;
     display: grid;
