@@ -232,7 +232,8 @@
     border-width:1px;
     border-color: rgba(0,0, 0, .1);
     border-radius: 2%;
-    height: 285px;
+    height: min-content;
+    max-height: 285px;
     width: 100%;
     margin-top: 5px;
     margin-top: 5px;
@@ -241,7 +242,7 @@
 .content .post-images img{
     height: 100%;
     width: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 .nav-bot{
     display: flex;

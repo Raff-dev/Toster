@@ -59,20 +59,11 @@
 
 </body>
 <script src=" {% static 'post/post.js' %}"></script>
-
 <script>
     $(document).ready(function () {
         $(document).focus()
     })
-    $('.login-button').on('click', function () {
-        var form = document.getElementById('login-form')
-        var formData = new FormData(form)
-        let url = '/token/'
-        let token = apiRequest(url, 'POST', formData)
-        console.log('token', token)
-        if (token) sessionStorage.setItem('token', result)
-
-    })
+    saveToken()
 </script>
 
 </html>
