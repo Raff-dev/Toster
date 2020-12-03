@@ -1,4 +1,4 @@
-
+[tags]: <> (Python, Django, JavaScript, JQuery, CSS)
 Toster is a copy of Twitter implemented in *Django framework*.    
 Those are its main features:
 ---
