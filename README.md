@@ -4,19 +4,16 @@ Those are its main features:
 ---
 
   * #### User authenthication and creating new posts   
+<img src="gifs/tosterlogin.gif"/>
 
-![](gifs/tosterlogin.gif)
   * #### Commenting and liking posts
-
-![](gifs/postcommen.gif)
+<img src="gifs/postcommen.gif"/>
 
   * #### Editing profile
-
-![](gifs/profile.gif)
+<img src="gifs/profile.gif"/>
 
   * #### Viewing profile content and browsing hashtags
-
-![](gifs/profilehashtags.gif)
+<img src="gifs/profilehashtags.gif"/>
 
 
 
