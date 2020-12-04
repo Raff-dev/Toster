@@ -2,18 +2,36 @@
 Toster is a copy of Twitter implemented in *Django framework*.    
 Those are its main features:
 ---
-
-  * #### User authenthication and creating new posts   
+<p align="center">
+<table style="width:100%">
+<tr>
+<th>User authenthication | New Posts </th>
+<th>Commenting | Liking</th> 
+</tr>
+<tr>
+<td valign="top">
 <img src="gifs/tosterlogin.gif"/>
-
-  * #### Commenting and liking posts
+</td>
+<td valign="top">
 <img src="gifs/postcommen.gif"/>
+</tr>
+</table>
+</p>
 
-  * #### Editing profile
+***
+
+<p align="center" >
+<table  style="width:100%">
+<tr>
+<th>Editing profile</th>
+<th>Browsing hashtags</th> 
+</tr>
+<tr>
+<td valign="top">
 <img src="gifs/profile.gif"/>
-
-  * #### Viewing profile content and browsing hashtags
+</td>
+<td valign="top">
 <img src="gifs/profilehashtags.gif"/>
-
-
-
+</tr>
+</table>
+</p>
